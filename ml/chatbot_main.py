@@ -62,6 +62,8 @@ class XMUMChatbot:
         self.context = ContextManager()
         self.retriever = KnowledgeRetriever()
         self.translator = GeminiTranslator()
+        self.matcher = self.retriever.gemini_matcher
+
         print(
             "[Chatbot] [OK] Initialized with intent classifier, "
             f"{self.retriever.source} knowledge base, and translator."
@@ -161,6 +163,7 @@ class XMUMChatbot:
                 response = fallback_response
             else:
                 response = self._handle_unknown(cleaned_query, entities, debug)
+
         else:
             best_item, confidence, all_scores = self.retriever.retrieve(
                 module=module,
@@ -168,14 +171,27 @@ class XMUMChatbot:
                 extracted_entities=entities,
                 sub_intent=sub_intent
             )
-            
+
+            # ──────────────────────────────────────────────────────────────
+            # Step 3.5: RAG — synthesize answer from retrieved chunks
+            # ──────────────────────────────────────────────────────────────
+            rag_answer = ""
+            if all_scores:
+                top_chunks = [(item, s) for item, s in all_scores if s > 0][:5]
+                if top_chunks:
+                    rag_answer = self.matcher.generate_rag_answer(
+                        user_query=contextual_query,
+                        retrieved_chunks=top_chunks,
+                        language=detected_language
+                    )
+
             # ──────────────────────────────────────────────────────────────
             # Step 4: Build Response
             # ──────────────────────────────────────────────────────────────
             if best_item and confidence > 0:
                 response = self._build_success_response(
                     best_item, confidence, all_scores, module, sub_intent,
-                    entities, debug
+                    entities, debug, rag_answer=rag_answer
                 )
             else:
                 fallback_response = self._try_global_retrieval(
@@ -185,6 +201,7 @@ class XMUMChatbot:
                     response = fallback_response
                 else:
                     response = self._handle_no_match(module, entities, debug)
+
 
         self._append_context_debug(response, cleaned_query, contextual_query, debug)
 
@@ -306,7 +323,8 @@ class XMUMChatbot:
         module: str,
         sub_intent: str,
         entities: Dict[str, List[str]],
-        debug: bool
+        debug: bool,
+        rag_answer: str = ""
     ) -> ChatbotResponse:
         """Build a successful response with match found."""
         
@@ -325,7 +343,7 @@ class XMUMChatbot:
             )
         
         return ChatbotResponse(
-            answer=best_item.answer,
+            answer=rag_answer if rag_answer else best_item.answer,
             confidence_score=confidence,
             matched_question=best_item.question,
             module=module,

@@ -145,25 +145,25 @@ Candidate Questions:
 
         return -1, 0.0, last_error
 
-        def generate_rag_answer(
+    def generate_rag_answer(
         self,
         user_query: str,
         retrieved_chunks: list,
         language: str = "English"
     ) -> str:
-            """
-            Synthesize a natural answer from retrieved knowledge chunks.
-            Gemini acts as a READER only — strictly uses provided context.
+        """
+        Synthesize a natural answer from retrieved knowledge chunks.
+        Gemini acts as a READER only — strictly uses provided context.
 
-            Args:
-                user_query: Original user question
-                retrieved_chunks: List of (KnowledgeItem, score) tuples from retriever
-                language: Target language for the response
+        Args:
+            user_query: Original user question
+            retrieved_chunks: List of (KnowledgeItem, score) tuples from retriever
+            language: Target language for the response
 
-            Returns:
-                A natural language answer grounded in the retrieved context.
-                Returns empty string if generation fails.
-            """
+        Returns:
+            A natural language answer grounded in the retrieved context.
+            Returns empty string if generation fails.
+        """
         if not self.is_available() or not retrieved_chunks:
             return ""
 
