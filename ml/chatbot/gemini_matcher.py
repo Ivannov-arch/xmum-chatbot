@@ -144,3 +144,79 @@ Candidate Questions:
                 continue
 
         return -1, 0.0, last_error
+
+        def generate_rag_answer(
+        self,
+        user_query: str,
+        retrieved_chunks: list,
+        language: str = "English"
+    ) -> str:
+        """
+        Synthesize a natural answer from retrieved knowledge chunks.
+        Gemini acts as a READER only — strictly uses provided context.
+
+        Args:
+            user_query: Original user question
+            retrieved_chunks: List of (KnowledgeItem, score) tuples from retriever
+            language: Target language for the response
+
+        Returns:
+            A natural language answer grounded in the retrieved context.
+            Returns empty string if generation fails.
+        """
+        if not self.is_available() or not retrieved_chunks:
+            return ""
+
+        # Build context from top retrieved items
+        context_parts = []
+        for i, (item, score) in enumerate(retrieved_chunks[:5], start=1):
+            context_parts.append(
+                f"[Source {i}]\n"
+                f"Q: {item.question}\n"
+                f"A: {item.answer}"
+            )
+        context = "\n\n".join(context_parts)
+
+        prompt = f"""You are a helpful campus assistant for XMUM (Xiamen University Malaysia).
+Your job is to answer the student's question using ONLY the context provided below.
+
+STRICT RULES:
+1. Answer ONLY from the provided context. Do NOT use any outside knowledge.
+2. If the context does not contain the answer, say: "I don't have specific information about that. Please contact the relevant office directly."
+3. Be concise, friendly, and helpful.
+4. Do not mention "Source 1", "Source 2" etc. in your answer — just write naturally.
+5. If responding in {language}, keep the answer in {language}.
+
+--- CONTEXT ---
+{context}
+--- END CONTEXT ---
+
+Student's Question: {user_query}
+
+Answer:"""
+
+        for api_key in self.api_keys:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent?key={api_key}"
+            payload = {
+                "contents": [{"parts": [{"text": prompt}]}],
+                "generationConfig": {
+                    "temperature": 0.2,
+                    "maxOutputTokens": 512,
+                }
+            }
+            try:
+                response = requests.post(url, headers={"Content-Type": "application/json"},
+                                         json=payload, timeout=15)
+                if response.status_code == 200:
+                    candidates = response.json().get("candidates", [])
+                    if candidates:
+                        parts = candidates[0].get("content", {}).get("parts", [])
+                        if parts:
+                            return parts[0].get("text", "").strip()
+                if response.status_code in (429, 403):
+                    continue
+            except Exception as e:
+                print(f"[Matcher] RAG generation error: {e}")
+                continue
+
+        return ""

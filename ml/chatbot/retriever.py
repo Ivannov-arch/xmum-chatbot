@@ -21,6 +21,7 @@ from dotenv import load_dotenv
 
 from chatbot.preprocessor import build_augmented_query, build_search_terms, normalize
 from chatbot.gemini_matcher import GeminiMatcher
+from chatbot.embedder import GeminiEmbedder
 
 # Load environment variables from .env
 load_dotenv()
@@ -86,6 +87,8 @@ class KnowledgeRetriever:
         self.knowledge_base: List[KnowledgeItem] = []
         self.module_index: Dict[str, List[KnowledgeItem]] = {}
         self.gemini_matcher = GeminiMatcher()
+        self.embedder = GeminiEmbedder()
+
         source = _get_kb_source()
         if source in LOCAL_KB_SOURCES:
             self.source = "local"
@@ -170,6 +173,56 @@ class KnowledgeRetriever:
                 self._add_row(row)
 
         print(f"[Retriever]  Loaded {len(self.knowledge_base)} items from local JSON seeds")
+
+
+    def _retrieve_by_vector(
+        self,
+        user_message: str,
+        filter_module: Optional[str] = None,
+        top_k = 5
+    ) -> List[Tuple[KnowledgeItem, float]]:
+        """
+        Semantic vector search via Supabase pgvector.
+        Returns list of (KnowledgeItem, similarity_score) sorted by score desc.
+        Returns empty list if embedder or Supabase is unavailable.
+        """
+        if not self.embedder.is_available() or self.supabase is None:
+            return []
+        
+        embedding = self.embedder.embed_text(user_message)
+        if embedding is None:
+            return []
+
+        try:
+            params = {
+                "query_embedding": embedding,
+                "match_threshold": 0.3,
+                "match_count": top_k
+            }
+            if filter_module:
+                params["filter_module"] = filter_module
+            
+            response = self.supabase.rpc("match_documents", params).execute()
+            rows = response.data or []
+
+            results = []
+            for row in rows:
+                item = KnowledgeItem(
+                    module=row['module'],
+                    question=row['question'],
+                    answer=row['answer'],
+                    keywords=row.get('keywords', []),
+                    sub_intent=row.get('sub_intent'),
+                    id=row.get('id')
+                )
+                results.append((item, float(row["similarity"])))
+
+            return results
+
+        except Exception as e:
+            print(f"[Retriever] Error in _retrieve_by_vector: {e}")
+            return []
+            
     
     def retrieve(
         self,
@@ -193,14 +246,21 @@ class KnowledgeRetriever:
             - best_score: Confidence score of the best match
             - all_scores: List of (item, score) sorted by score descending
         """
-        # Get items from the relevant module. The sub-intent is used as a
-        # ranking hint instead of a hard filter because long questions often
-        # contain terms from more than one campus-life category.
         candidates = self.module_index.get(module, [])
         if not candidates:
             return None, 0.0, []
-        
-        # Try Gemini semantic matching first if available
+
+        # ── Primary path: pgvector semantic search ──────────────────
+        vector_results = self._retrieve_by_vector(user_message, filter_module=module)
+        if vector_results:
+            best_item, best_score = vector_results[0]
+            # Scale similarity (0-1) to confidence score (0-10)
+            best_score_scaled = best_score * 10.0
+            scores = [(item, s * 10.0) for item, s in vector_results]
+            print(f"[Retriever] Vector search: top match '{best_item.question[:50]}' ({best_score:.3f})")
+            return best_item, best_score_scaled, scores
+
+        # ── Fallback 1: Gemini semantic matching (if no embeddings yet) ──
         if self.gemini_matcher.is_available():
             try:
                 candidate_questions = [item.question for item in candidates]
@@ -210,32 +270,27 @@ class KnowledgeRetriever:
                 if matched_idx != -1 and confidence >= 0.5:
                     best_item = candidates[matched_idx]
                     best_score = confidence * 10.0
-                    
                     scores = []
                     for idx, item in enumerate(candidates):
                         if idx == matched_idx:
                             scores.append((item, best_score))
                         else:
                             scores.append((item, 0.0))
-                    
                     return best_item, best_score, scores
             except Exception as e:
                 print(f"[Retriever] Gemini matching failed, falling back: {e}")
 
-        # Score each candidate using fallback rule-based matching
+        # ── Fallback 2: keyword scoring ──────────────────────────────
         scores = []
         for item in candidates:
             score = self._score_item(user_message, item, extracted_entities)
             if sub_intent and sub_intent != "unknown" and item.sub_intent == sub_intent:
                 score += 1.0
             scores.append((item, score))
-        
-        # Sort by score descending
+
         scores.sort(key=lambda x: x[1], reverse=True)
-        
         best_item = scores[0][0] if scores else None
         best_score = scores[0][1] if scores else 0.0
-        
         return best_item, best_score, scores
 
     def _meaningful_terms(self, text: str) -> set[str]:
@@ -352,7 +407,17 @@ class KnowledgeRetriever:
         extracted_entities: Optional[Dict[str, List[str]]] = None,
     ) -> Tuple[Optional[KnowledgeItem], float, List[Tuple[KnowledgeItem, float]]]:
         """Retrieve the best item without relying on intent classification."""
-        # Try Gemini semantic matching first if available
+
+        # ── Primary path: pgvector semantic search (no module filter) ──
+        vector_results = self._retrieve_by_vector(user_message, top_k=5)
+        if vector_results:
+            best_item, best_score = vector_results[0]
+            best_score_scaled = best_score * 10.0
+            scores = [(item, s * 10.0) for item, s in vector_results]
+            print(f"[Retriever] Global vector search: '{best_item.question[:50]}' ({best_score:.3f})")
+            return best_item, best_score_scaled, scores
+
+        # ── Fallback 1: Gemini semantic matching ──────────────────────
         if self.gemini_matcher.is_available():
             try:
                 candidates = [item for item in self.knowledge_base if item.module != "general"]
@@ -373,13 +438,13 @@ class KnowledgeRetriever:
             except Exception as e:
                 print(f"[Retriever] Gemini global matching failed, falling back: {e}")
 
+        # ── Fallback 2: keyword scoring ───────────────────────────────
         scores = [
             (item, self._score_item(user_message, item, extracted_entities))
             for item in self.knowledge_base
             if item.module != "general"
         ]
         scores.sort(key=lambda x: x[1], reverse=True)
-
         best_item = scores[0][0] if scores else None
         best_score = scores[0][1] if scores else 0.0
         return best_item, best_score, scores

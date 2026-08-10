@@ -1,7 +1,22 @@
 # 🎓 XMUM Campus Knowledge Chatbot
 
-A text-based campus assistant chatbot for **Xiamen University Malaysia (XMUM)** students.  
-Built with **Python**, powered by **Supabase (PostgreSQL)** as the knowledge base, testable in terminal, and API-ready for React / Next.js frontends.
+An intelligent, text-based campus assistant chatbot designed to help **Xiamen University Malaysia (XMUM)** students navigate university life. It acts as a centralized information hub, helping users query campus contacts, discover facilities, and look up academic rules.
+
+## 🔗 Deployed Links
+- **Web Frontend (React/Next.js):** [Click here to visit](https://your-frontend-domain.com)
+- **FastAPI Backend (API Docs):** [Click here to view API Docs](https://your-backend-domain.com/docs)
+
+---
+
+### 🌟 Key Features
+- **Smart Intent Classification:** Automatically detects what you are asking about and routes the query to the correct information domain.
+- **Rich Knowledge Base:** Powered by **Supabase (PostgreSQL)** with structured data for campus directories, daily life, and academic regulations.
+- **Context-Aware Conversations:** Remembers recent turns to support natural, multi-turn follow-up questions.
+- **Multi-Interface Support:** Can be tested directly in the terminal, or run as a **FastAPI** REST backend integrated with modern web frameworks like React or Next.js.
+- **Comprehensive Domain Knowledge:**
+  1. 📁 **Administrative & Campus Directory:** Contact information, office locations, and departments.
+  2. 📁 **Daily Campus Life & Facilities:** Operating hours of campus facilities (library, gym), food stalls, hostel rules, and student activities.
+  3. 📁 **Academic Navigation:** Course registrations, exam guidelines, grading systems, and key academic procedures.
 
 ---
 
@@ -384,13 +399,6 @@ docker run -p 8000:8000 --env-file .env xmum-chatbot
 
 ---
 
-## 👥 Team Members
-
-| Name | Role |
-|------|------|
-| TBD  | TBD  |
-
----
 
 ## 📚 References
 
