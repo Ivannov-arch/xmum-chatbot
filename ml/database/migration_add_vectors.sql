@@ -14,22 +14,20 @@
 -- Step 1: Enable pgvector extension (safe to run multiple times)
 CREATE EXTENSION IF NOT EXISTS vector;
 
--- Step 2: Add embedding column (3072 dims = gemini-embedding-001 output)
+-- Step 2: Add embedding column (768 dims = gemini-embedding-001 with outputDimensionality: 768)
 -- Safe: ALTER TABLE ADD COLUMN does NOT delete existing data.
 ALTER TABLE knowledge_items
-    ADD COLUMN IF NOT EXISTS embedding vector(3072);
+    ADD COLUMN IF NOT EXISTS embedding vector(768);
 
 -- Step 3: Create HNSW index for fast approximate cosine similarity search
--- HNSW is faster than IVFFlat for small-medium datasets (<100k rows)
 CREATE INDEX IF NOT EXISTS knowledge_items_embedding_idx
     ON knowledge_items
-    USING hnsw (embedding vector_cosine_ops)
-    WITH (m = 16, ef_construction = 64);
+    USING hnsw (embedding vector_cosine_ops);
 
 -- Step 4: RPC function for semantic vector search
 -- Called via supabase.rpc('match_documents', {...})
 CREATE OR REPLACE FUNCTION match_documents(
-    query_embedding    vector(3072),
+    query_embedding    vector(768),
     match_threshold    float     DEFAULT 0.5,
     match_count        int       DEFAULT 5,
     filter_module      text      DEFAULT NULL

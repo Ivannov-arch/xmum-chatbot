@@ -22,7 +22,8 @@ from chatbot.embedder import GeminiEmbedder
 
 def get_supabase_client():
     url = os.getenv("SUPABASE_URL")
-    key = os.getenv("SUPABASE_ANON_KEY")
+    key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_ANON_KEY")
+
     if not url or not key:
         raise ValueError("SUPABASE_URL and SUPABASE_ANON_KEY must be set in .env")
     return create_client(url, key)

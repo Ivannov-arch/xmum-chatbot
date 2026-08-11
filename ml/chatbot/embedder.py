@@ -49,7 +49,8 @@ class GeminiEmbedder:
             "model": f"models/{self.EMBEDDING_MODEL}",
             "content": {
                 "parts": [{"text": text}]
-            }
+            },
+            "outputDimensionality": 768
         }
 
         for api_key in self.api_keys:
