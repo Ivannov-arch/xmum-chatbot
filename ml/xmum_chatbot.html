@@ -224,7 +224,9 @@
   </div>
 
   <div class="chat-header">
-    <div class="avatar">XMU</div>
+    <div class="avatar" style="overflow: hidden; padding: 0;">
+      <img src="mascot.jpg" alt="XMUM Mascot" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+    </div>
     <div>
       <div class="title">XMUM New Student Campus Assistant</div>
       <div class="sub">NLP-Powered Campus Assistant with Python Backend</div>
@@ -342,7 +344,11 @@ function addMsg(role, html, debugData) {
 
   const av = document.createElement("div");
   av.className = "mini-av";
-  av.textContent = role === "user" ? "👤" : "🤖";
+  if (role === "user") {
+    av.textContent = "👤";
+  } else {
+    av.innerHTML = '<img src="mascot.jpg" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+  }
 
   const bub = document.createElement("div");
   bub.className = "bubble";
@@ -389,7 +395,7 @@ function setLoading(loading) {
     wrap.className = "msg bot";
     const av = document.createElement("div");
     av.className = "mini-av";
-    av.textContent = "🤖";
+    av.innerHTML = '<img src="mascot.jpg" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
     const bub = document.createElement("div");
     bub.className = "bubble loading";
     bub.textContent = "Thinking...";

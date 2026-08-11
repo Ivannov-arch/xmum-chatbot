@@ -625,7 +625,9 @@ export default function ChatbotHome() {
                 </svg>
               </button>
 
-              <div className="brand-avatar">XMU</div>
+              <div className="brand-avatar overflow-hidden">
+                <img src="/mascot.jpg" alt="XMUM Mascot" className="w-full h-full object-cover" />
+              </div>
 
               <div>
                 <p className="brand-name">XMUM Campus Assistant</p>
@@ -691,7 +693,11 @@ export default function ChatbotHome() {
                   className={`msg-avatar ${msg.role === "user" ? "msg-avatar--user" : ""
                     }`}
                 >
-                  {msg.role === "user" ? "U" : "🤖"}
+                  {msg.role === "user" ? (
+                    "U"
+                  ) : (
+                    <img src="/mascot.jpg" alt="Mascot" className="w-full h-full object-cover rounded-full" />
+                  )}
                 </div>
 
                 <div
@@ -769,7 +775,9 @@ export default function ChatbotHome() {
 
             {isLoading && (
               <div className="msg-row msg-row--bot">
-                <div className="msg-avatar">🤖</div>
+                <div className="msg-avatar overflow-hidden">
+                  <img src="/mascot.jpg" alt="Mascot" className="w-full h-full object-cover rounded-full" />
+                </div>
                 <div className="bubble bubble--bot bubble--typing">
                   <span />
                   <span />
