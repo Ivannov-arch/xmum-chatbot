@@ -187,24 +187,24 @@ Candidate Questions:
             if formatted_turns:
                 history_text = "--- RECENT CHAT HISTORY ---\n" + "\n".join(formatted_turns) + "\n---------------------------\n\n"
 
-                prompt = f"""You are a helpful campus assistant for XMUM (Xiamen University Malaysia).
-                    Your job is to answer the student's question using ONLY the context provided below.
+        prompt = f"""You are a helpful campus assistant for XMUM (Xiamen University Malaysia).
+Your job is to answer the student's question using ONLY the context provided below.
 
-                    STRICT RULES:
-                    1. Answer ONLY from the provided context. Do NOT use any outside knowledge.
-                    2. If the context does not contain the answer, say: "I don't have specific information about that. Please contact the relevant office directly."
-                    3. Be concise, friendly, and helpful.
-                    4. Do not mention "Source 1", "Source 2" etc. in your answer — just write naturally.
-                    5. Consider the recent chat history when the student asks follow-up questions (e.g. using "it", "they", "there", "the fees", etc.).
-                    6. If responding in {language}, keep the answer in {language}.
+STRICT RULES:
+1. Answer ONLY from the provided context. Do NOT use any outside knowledge.
+2. If the context does not contain the answer, say: "I don't have specific information about that. Please contact the relevant office directly."
+3. Be concise, friendly, and helpful.
+4. Do not mention "Source 1", "Source 2" etc. in your answer — just write naturally.
+5. Consider the recent chat history when the student asks follow-up questions (e.g. using "it", "they", "there", "the fees", etc.).
+6. If responding in {language}, keep the answer in {language}.
 
-                    {history_text}--- CONTEXT ---
-                    {context}
-                    --- END CONTEXT ---
+{history_text}--- CONTEXT ---
+{context}
+--- END CONTEXT ---
 
-                    Student's Question: {user_query}
+Student's Question: {user_query}
 
-                    Answer:"""
+Answer:"""
 
 
         for api_key in self.api_keys:
