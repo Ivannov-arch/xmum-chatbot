@@ -179,10 +179,12 @@ class XMUMChatbot:
             if all_scores:
                 top_chunks = [(item, s) for item, s in all_scores if s > 0][:5]
                 if top_chunks:
+                    session_history = self.context.get_history(session_id)
                     rag_answer = self.matcher.generate_rag_answer(
                         user_query=contextual_query,
                         retrieved_chunks=top_chunks,
-                        language=detected_language
+                        language=detected_language,
+                        chat_history = session_history
                     )
 
             # ──────────────────────────────────────────────────────────────

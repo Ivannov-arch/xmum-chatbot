@@ -149,7 +149,8 @@ Candidate Questions:
         self,
         user_query: str,
         retrieved_chunks: list,
-        language: str = "English"
+        language: str = "English",
+        chat_history: list = None
     ) -> str:
         """
         Synthesize a natural answer from retrieved knowledge chunks.
@@ -177,23 +178,34 @@ Candidate Questions:
             )
         context = "\n\n".join(context_parts)
 
-        prompt = f"""You are a helpful campus assistant for XMUM (Xiamen University Malaysia).
-Your job is to answer the student's question using ONLY the context provided below.
+        history_text = ""
+        if chat_history:
+            formatted_turns = []
+            for turn in chat_history[-4:]:
+                role_label = "Student" if turn.get("role") == "user" else "Assistant"
+                formatted_turns.append(f"{role_label}: {turn.get('message')}")
+            if formatted_turns:
+                history_text = "--- RECENT CHAT HISTORY ---\n" + "\n".join(formatted_turns) + "\n---------------------------\n\n"
 
-STRICT RULES:
-1. Answer ONLY from the provided context. Do NOT use any outside knowledge.
-2. If the context does not contain the answer, say: "I don't have specific information about that. Please contact the relevant office directly."
-3. Be concise, friendly, and helpful.
-4. Do not mention "Source 1", "Source 2" etc. in your answer — just write naturally.
-5. If responding in {language}, keep the answer in {language}.
+                prompt = f"""You are a helpful campus assistant for XMUM (Xiamen University Malaysia).
+                    Your job is to answer the student's question using ONLY the context provided below.
 
---- CONTEXT ---
-{context}
---- END CONTEXT ---
+                    STRICT RULES:
+                    1. Answer ONLY from the provided context. Do NOT use any outside knowledge.
+                    2. If the context does not contain the answer, say: "I don't have specific information about that. Please contact the relevant office directly."
+                    3. Be concise, friendly, and helpful.
+                    4. Do not mention "Source 1", "Source 2" etc. in your answer — just write naturally.
+                    5. Consider the recent chat history when the student asks follow-up questions (e.g. using "it", "they", "there", "the fees", etc.).
+                    6. If responding in {language}, keep the answer in {language}.
 
-Student's Question: {user_query}
+                    {history_text}--- CONTEXT ---
+                    {context}
+                    --- END CONTEXT ---
 
-Answer:"""
+                    Student's Question: {user_query}
+
+                    Answer:"""
+
 
         for api_key in self.api_keys:
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent?key={api_key}"
