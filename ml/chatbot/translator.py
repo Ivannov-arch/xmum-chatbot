@@ -178,6 +178,7 @@ English Answer:
                 }]
             }],
             "generationConfig": {
+                "maxOutputTokens": 4096,
                 "responseMimeType": "application/json",
                 "responseSchema": {
                     "type": "OBJECT",

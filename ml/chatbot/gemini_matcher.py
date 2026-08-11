@@ -201,7 +201,7 @@ Answer:"""
                 "contents": [{"parts": [{"text": prompt}]}],
                 "generationConfig": {
                     "temperature": 0.2,
-                    "maxOutputTokens": 512,
+                    "maxOutputTokens": 4096,
                 }
             }
             try:

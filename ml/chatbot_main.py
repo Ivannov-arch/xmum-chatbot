@@ -487,7 +487,7 @@ class ResponseFormatter:
             f"🤖 XMUMC Assistant Response",
             "=" * 70,
             f"\nAnswer:\n{response.answer}",
-            f"\n Confidence: {response.confidence_score:.1%}",
+            f"\n Confidence: {(response.confidence_score / 10.0):.1%}",
         ]
         
         if response.matched_question:
