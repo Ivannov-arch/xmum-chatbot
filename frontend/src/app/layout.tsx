@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "XMUM Campus Assistant",
   description: "NLP-Powered Campus Assistant for Xiamen University Malaysia",
+  icons: {
+    icon: "/mascot.jpg",
+  },
 };
 
 export default function RootLayout({
