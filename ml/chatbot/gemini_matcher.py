@@ -23,7 +23,7 @@ class GeminiMatcher:
         self.api_key = self.api_keys[0] if self.api_keys else None
 
         # Default model for cost-effective and fast matching
-        self.model = os.getenv("GEMINI_MODEL", "gemini-3.5-flash")
+        self.model = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
         
     def is_available(self) -> bool:
         """Check if at least one Gemini API Key is configured."""

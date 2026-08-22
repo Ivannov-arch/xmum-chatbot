@@ -24,18 +24,11 @@ class GeminiTranslator:
         self.api_key = self.api_keys[0] if self.api_keys else None
 
         # Define fallback models in order of preference
-        primary_model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+        primary_model = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
         fallback_candidates = [
-            "gemini-3.5-flash",
-            "gemini-2.5-flash-lite",
+            "gemini-3.6-flash",
             "gemini-2.5-flash",
-            "gemini-flash-latest",
-            "gemini-pro-latest",
-            "gemini-2.5-pro",
-            "gemini-3-flash",
-            "gemini-3.1-pro",
-            "gemini-3.1-flash-lite",
-            "gemini-3.5-flash"
+            "gemini-3.1-pro-preview"
         ]
         # De-duplicate while preserving order
         self.models = [primary_model]

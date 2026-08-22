@@ -15,11 +15,10 @@ from dataclasses import dataclass
 import json
 from uuid import uuid4
 
-# Import your friends' modules from the chatbot package
 from chatbot.context_manager import ContextManager
 from chatbot.entity_recognizer import extract_entities, print_entities
 from chatbot.intent_classifier import IntentClassifier
-from chatbot.preprocessor import is_greeting
+from chatbot.preprocessor import normalize
 from chatbot.retriever import KnowledgeRetriever, KnowledgeItem
 from chatbot.translator import GeminiTranslator
 
@@ -86,14 +85,6 @@ class XMUMChatbot:
             ChatbotResponse with answer and metadata
         """
         # ──────────────────────────────────────────────────────────────
-        # Step 0: Handle short conversational greetings
-        # ──────────────────────────────────────────────────────────────
-        if is_greeting(user_message):
-            response = self._handle_greeting(debug)
-            self._store_turns(session_id, user_message, response)
-            return response
-
-        # ──────────────────────────────────────────────────────────────
         # Step 0.1: Check for exact match in database (fast-path)
         # ──────────────────────────────────────────────────────────────
         exact_match_item = None
@@ -133,6 +124,7 @@ class XMUMChatbot:
         detected_language = "English"
         is_english = True
         cleaned_query = user_message
+        rag_answer = ""
 
         if self.translator.is_available():
             translation_info = self.translator.preprocess_query(user_message)
@@ -175,7 +167,6 @@ class XMUMChatbot:
             # ──────────────────────────────────────────────────────────────
             # Step 3.5: RAG — synthesize answer from retrieved chunks
             # ──────────────────────────────────────────────────────────────
-            rag_answer = ""
             if all_scores:
                 top_chunks = [(item, s) for item, s in all_scores if s > 0][:5]
                 if top_chunks:
@@ -183,7 +174,7 @@ class XMUMChatbot:
                     rag_answer = self.matcher.generate_rag_answer(
                         user_query=contextual_query,
                         retrieved_chunks=top_chunks,
-                        language=detected_language,
+                        language="English",
                         chat_history = session_history
                     )
 

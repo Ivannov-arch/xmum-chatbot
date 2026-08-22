@@ -2,7 +2,6 @@
 
 from chatbot.entity_recognizer import extract_entities
 from chatbot.intent_classifier import IntentClassifier
-from chatbot.preprocessor import is_greeting
 from chatbot.retriever import KnowledgeRetriever, KnowledgeItem
 
 from typing import Dict, List, Optional, Tuple
@@ -75,10 +74,6 @@ class Bot:
         Returns:
             ChatbotResponse with answer and metadata
         """
-        # Step 0: Handle short conversational greetings
-        if is_greeting(user_message):
-            return self._handle_greeting(debug)
-
         # Step 1: Extract Entities
         entities = extract_entities(user_message)
 
