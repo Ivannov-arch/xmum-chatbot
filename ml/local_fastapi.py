@@ -96,13 +96,17 @@ async def get_suggestions(module: Optional[str] = None, limit: int = 10):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/health")
+@app.api_route("/api/health", methods=["GET", "HEAD"])
+@app.api_route("/health", methods=["GET", "HEAD"])
+@app.api_route("/ping", methods=["GET", "HEAD"])
 async def health_check():
+    kb_size = len(chatbot.retriever.knowledge_base) if (chatbot and hasattr(chatbot, "retriever")) else 0
     return {
         "status": "ok",
-        "chatbot": "ready",
-        "knowledge_base_size": len(chatbot.retriever.knowledge_base)
+        "chatbot": "ready" if chatbot else "starting",
+        "knowledge_base_size": kb_size
     }
+
 
 @app.get("/", response_class=HTMLResponse)
 async def index():
@@ -173,8 +177,8 @@ def main():
     )
     parser.add_argument(
         '--host',
-        default='localhost',
-        help='Host to bind to (default: localhost)'
+        default='0.0.0.0',
+        help='Host to bind to (default: 0.0.0.0 for external access)'
     )
     parser.add_argument(
         '--debug',

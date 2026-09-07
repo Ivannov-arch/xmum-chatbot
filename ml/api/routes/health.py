@@ -3,12 +3,14 @@ from fastapi import APIRouter, Request
 router = APIRouter()
 
 
-@router.get("/health")
+@router.api_route("/health", methods=["GET", "HEAD"])
+@router.api_route("/ping", methods=["GET", "HEAD"])
 async def health(request: Request):
-    chatbot = request.app.state.chatbot
+    chatbot = getattr(request.app.state, "chatbot", None)
     return {
         "status": "ok",
         "version": "1.0.0",
-        "knowledge_source": chatbot.retriever.source if chatbot else "unavailable",
-        "knowledge_base_size": len(chatbot.retriever.knowledge_base) if chatbot else 0,
+        "knowledge_source": chatbot.retriever.source if (chatbot and hasattr(chatbot, "retriever")) else "ready",
+        "knowledge_base_size": len(chatbot.retriever.knowledge_base) if (chatbot and hasattr(chatbot, "retriever")) else 0,
     }
+

@@ -26,8 +26,15 @@ app.add_middleware(
 
 app.include_router(chat_router, prefix="/api")
 app.include_router(health_router, prefix="/api")
+app.include_router(health_router)
 
 
-@app.get("/")
+@app.api_route("/", methods=["GET", "HEAD"])
 async def root():
-    return {"message": "XMUMC Campus Assistant API"}
+    return {"status": "ok", "message": "XMUMC Campus Assistant API"}
+
+
+@app.api_route("/ping", methods=["GET", "HEAD"])
+async def ping():
+    return {"status": "ok", "message": "pong"}
+
