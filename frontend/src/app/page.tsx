@@ -65,7 +65,12 @@ const FALLBACK_SUGGESTIONS: string[] = [
 ];
 
 export default function ChatbotHome() {
-  const [apiBaseUrl, setApiBaseUrl] = useState<string>("");
+  const [apiBaseUrl, setApiBaseUrl] = useState<string>(
+    () =>
+      process.env.NEXT_PUBLIC_API_URL ||
+      process.env.NEXT_PUBLIC_BACKEND_URL ||
+      "http://localhost:8000"
+  );
   const [apiStatus, setApiStatus] = useState<ApiStatus>("connecting");
   const [apiStatusMsg, setApiStatusMsg] = useState<string>(
     "Connecting to backend...",
@@ -183,7 +188,11 @@ export default function ChatbotHome() {
   // ───────────────────────────────────────────────────────────────────────────
 
   useEffect(() => {
-    setApiBaseUrl(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000");
+    const envUrl =
+      process.env.NEXT_PUBLIC_API_URL ||
+      process.env.NEXT_PUBLIC_BACKEND_URL ||
+      "http://localhost:8000";
+    setApiBaseUrl(envUrl);
   }, []);
 
   // ───────────────────────────────────────────────────────────────────────────

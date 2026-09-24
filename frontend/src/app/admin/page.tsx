@@ -16,7 +16,10 @@ export default function AdminDashboard() {
     pendingSuggestions: 0,
   });
 
-  const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const backendUrl =
+    process.env.NEXT_PUBLIC_API_URL ||
+    process.env.NEXT_PUBLIC_BACKEND_URL ||
+    "http://localhost:8000";
   const [backendStatus, setBackendStatus] = useState<BackendStatus>("checking");
   const [loading, setLoading] = useState(true);
 
