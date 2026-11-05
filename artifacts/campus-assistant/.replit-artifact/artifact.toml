@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "XMUM Campus Assistant"
+description = "The existing XMUM campus chatbot and administration portal for campus information, academic guidance, knowledge management and conversation review."
+version = "1.0.0"
+id = "artifacts/campus-assistant"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 20831
+
+[services.development]
+run = "pnpm --filter @workspace/campus-assistant run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/campus-assistant", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/campus-assistant/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "20831"
+BASE_PATH = "/"

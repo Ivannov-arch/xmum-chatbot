@@ -1,45 +1,35 @@
-# [Project name]
+# XMUM Campus Assistant
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+Port of the imported campus chatbot and administration portal. Preserve the imported UI, content, and behavior; this is a migration, not a redesign.
 
-## Run & Operate
+## Run
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- Web workflow: `artifacts/campus-assistant: web`.
+- API workflow: `artifacts/api-server: API Server`.
+- The managed workflows supply `PORT` and route the web app at `/` and FastAPI at `/api`. Do not run a root-level `pnpm dev`.
+- Install Node dependencies with `pnpm install`; Python dependencies with `uv sync --frozen`.
+- Frontend check: `pnpm --filter @workspace/campus-assistant run typecheck`.
+- Migration tests: `pnpm --filter @workspace/api-server test`.
 
-## Stack
+## Structure
 
-- pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- `artifacts/campus-assistant/`: Vite/React frontend, original global CSS, mascot, public chat and `/admin` pages.
+- `artifacts/api-server/python/`: original Python chatbot, FastAPI routes and knowledge seeds. The API artifact runs this Python service rather than replacing the original NLP implementation.
+- `pyproject.toml` / `uv.lock`: Python runtime dependencies.
+- `.migration-backup/`: unchanged imported source/reference material; excluded from deployment.
+- Scaffold `lib/*` packages remain available but are not used to replace the existing Supabase database.
 
-## Where things live
+## Existing external services
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+Preserve Supabase authentication and database. Do not migrate the database without explicit authorization.
 
-## Architecture decisions
+- Shared configuration: `SUPABASE_URL` and `SUPABASE_ANON_KEY` for the original project (public anon/publishable key only, never service-role key). The Vite config exposes only these two public settings to the browser; Python reads the same settings at runtime.
+- Optional browser overrides: `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+- Optional: `GEMINI_API_KEY` enables the original semantic matching and translation.
+- Optional: `VITE_API_URL` / `VITE_BACKEND_URL` override same-origin API requests when intentionally using an external backend.
+- Without Supabase, the existing Python fallback loads the bundled JSON seeds. Public FAQ browsing uses that same loaded knowledge; admin sign-in and suggestion writes explicitly require configuration. Local knowledge is read-only, not a new database.
+- Signed-in admin CRUD and persistent conversation logging cannot be verified without the original service credentials and an authorized account.
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+## Testing notes
 
-## Product
-
-_Describe the high-level user-facing capabilities of this app once they exist._
-
-## User preferences
-
-_Populate as you build — explicit user instructions worth remembering across sessions._
-
-## Gotchas
-
-_Populate as you build — sharp edges, "always run X before Y" rules._
-
-## Pointers
-
-- See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details
+`test_migration.py` verifies the actual imported FastAPI app with its lifespan and bundled knowledge. The imported legacy test suite also contains placeholder tests referring to obsolete classes; those were preserved rather than rewritten as part of the port.

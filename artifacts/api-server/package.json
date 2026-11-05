@@ -4,9 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "export NODE_ENV=development && pnpm run build && pnpm run start",
-    "build": "node ./build.mjs",
-    "start": "node --enable-source-maps ./dist/index.mjs",
+    "dev": "cd ../.. && uv run --frozen python artifacts/api-server/python/serve.py",
+    "build": "cd ../.. && uv sync --frozen && uv run python -m compileall -q artifacts/api-server/python",
+    "start": "cd ../.. && uv run --frozen python artifacts/api-server/python/serve.py",
+    "test": "cd ../.. && uv run python -m pytest artifacts/api-server/python/tests/test_migration.py",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {

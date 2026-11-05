@@ -1,0 +1,1049 @@
+[
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "Who founded Xiamen University (XMU)?",
+    "answer": "Xiamen University (XMU) was founded by the Malayan Chinese Mr. Tan Kah Kee in 1921.",
+    "keywords": [
+      "founder",
+      "xmu",
+      "tan kah kee",
+      "1921"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "Why was Xiamen University Malaysia (XMUM) established?",
+    "answer": "Xiamen University Malaysia (XMUM) was established as a historic reciprocation, 93 years after XMU was founded, in the country where its founder, Mr. Tan Kah Kee, achieved great career success.",
+    "keywords": [
+      "establishment",
+      "reciprocation",
+      "tan kah kee",
+      "malaysia"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What spirit does Xiamen University Malaysia (XMUM) pledge to uphold?",
+    "answer": "Xiamen University Malaysia (XMUM) solemnly pledges to uphold Mr. Tan Kah Kee’s spirit of selfless dedication to the noble causes of education.",
+    "keywords": [
+      "spirit",
+      "tan kah kee",
+      "dedication",
+      "education"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What is the financial status of Xiamen University Malaysia (XMUM)?",
+    "answer": "Xiamen University Malaysia (XMUM) is a not-for-profit institution, and no surplus funds will be repatriated to China.",
+    "keywords": [
+      "not-for-profit",
+      "financial",
+      "funds",
+      "china"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "How will surplus funds at Xiamen University Malaysia (XMUM) be utilized?",
+    "answer": "Any surplus funds at Xiamen University Malaysia (XMUM) will be channelled back into research and scholarships for its students.",
+    "keywords": [
+      "surplus funds",
+      "research",
+      "scholarships"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What is the significance of Xiamen University Malaysia (XMUM)'s establishment for China-Malaysia relations?",
+    "answer": "The establishment of Xiamen University Malaysia (XMUM) sets new heights in educational cooperation and exchange between China and Malaysia.",
+    "keywords": [
+      "cooperation",
+      "china",
+      "malaysia",
+      "education"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What is XMU's goal for its Malaysia campus (XMUM)?",
+    "answer": "XMU aims to build its Malaysia campus (XMUM) into one of Malaysia's best universities, enriching the tertiary education landscape and producing high-quality, internationally competitive talents.",
+    "keywords": [
+      "goal",
+      "best university",
+      "tertiary education",
+      "talents"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What is the vision of Xiamen University Malaysia (XMUM)?",
+    "answer": "Xiamen University Malaysia (XMUM) aspires to become a university with a distinct global outlook, featuring first-class teaching and research, and embracing cultural diversity.",
+    "keywords": [
+      "xmum",
+      "vision",
+      "global outlook",
+      "research",
+      "postgraduate",
+      "postgrad"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What is the mission of Xiamen University Malaysia (XMUM)?",
+    "answer": "The mission of Xiamen University Malaysia (XMUM) is to nurture young talents with dignity and wisdom, turning them into fine citizens of the region who will contribute to the prosperity of the people and social progress of Malaysia, China and Southeast Asia.",
+    "keywords": [
+      "mission",
+      "talents",
+      "citizens",
+      "progress"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What is the full name of the university?",
+    "answer": "The full name of the university is Xiamen University Malaysia (XMUM).",
+    "keywords": [
+      "university",
+      "name",
+      "xmum"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What is the motto of Xiamen University Malaysia (XMUM)?",
+    "answer": "The motto of XMUM is \"Pursuing Excellence, Striving For Perfection\".",
+    "keywords": [
+      "xmum",
+      "motto",
+      "excellence",
+      "perfection"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What is Xiamen University Malaysia's (XMUM) vision?",
+    "answer": "XMUM aspires to become a university with a distinct global outlook, featuring first-class teaching and research, and embracing cultural diversity.",
+    "keywords": [
+      "xmum",
+      "vision",
+      "global outlook"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What is Xiamen University Malaysia's (XMUM) mission?",
+    "answer": "To nurture young talents with dignity and wisdom, turning them into fine citizens of the region who will contribute to the prosperity of the people and social progress of Malaysia, China and Southeast Asia.",
+    "keywords": [
+      "xmum",
+      "mission",
+      "nurture",
+      "talents"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "Are students terminated for disciplinary problems eligible for re-admission?",
+    "answer": "No, students who have been terminated by the university due to disciplinary problems will not be eligible for re-admission.",
+    "keywords": [
+      "re-admission",
+      "disciplinary",
+      "ineligible"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What is the mission of the XMUM Counselling Centre?",
+    "answer": "The XMUM Counselling Centre aims to promote the mental well-being of all students, meeting their unique needs irrespective of age, socioeconomic status, ethnicity, culture, religion, gender identity, and sexual orientation.",
+    "keywords": [
+      "counselling centre",
+      "mission",
+      "well-being"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What is the background of XMUM?",
+    "answer": "Upon the invitation of the Malaysian Ministry of Higher Education, Xiamen University (XMU) accepted the offer and thus, XMUM was established. We began in earnest to build our first offshore campus in Malaysia and became the pioneer university from China to establish a branch campus in Malaysia.",
+    "keywords": [
+      "establishment",
+      "history",
+      "pioneer",
+      "china"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What is the main focus of XMUM?",
+    "answer": "Xiamen University Malaysia aspires to become a university with a distinct global outlook, featuring first-class teaching and research, and embracing cultural diversity. It is committed to nurturing young talents with dignity and wisdom, helping them become responsible, steadfast members of society who will be able to contribute to the people, as well as to the social progress of Malaysia, China and Southeast Asia.",
+    "keywords": [
+      "mission",
+      "vision",
+      "global",
+      "diversity"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What is the motto of XMUM?",
+    "answer": "The motto of XMUM is \"Pursuing Excellence, Striving for Perfection\".",
+    "keywords": [
+      "motto",
+      "excellence",
+      "perfection"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What is the contact number for the Career Services Office?",
+    "answer": "The contact number for the Career Services Office is 03-8705 5300.",
+    "keywords": [
+      "career services",
+      "contact",
+      "phone"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "When was Xiamen University (XMU) established and by whom?",
+    "answer": "Xiamen University (XMU) was established in 1921 by the well-known overseas Chinese entrepreneur Tan Kah Kee.",
+    "keywords": [
+      "xmu",
+      "establishment",
+      "founder"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What are the key features of Xiamen University (XMU)?",
+    "answer": "Key features of Xiamen University (XMU) include Academic Excellence, Research and Innovation, a Beautiful Campus, and Global Presence, including its international campus Xiamen University Malaysia (XMUM).",
+    "keywords": [
+      "xmu",
+      "features",
+      "excellence"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What is the capital city of Malaysia?",
+    "answer": "The capital city of Malaysia is Kuala Lumpur, with Putrajaya as the administrative capital.",
+    "keywords": [
+      "malaysia",
+      "capital",
+      "kuala lumpur"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What is the official currency of Malaysia?",
+    "answer": "The official currency of Malaysia is the Malaysian Ringgit (MYR).",
+    "keywords": [
+      "malaysia",
+      "currency",
+      "myr"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "When was Xiamen University Malaysia (XMUM) established and where is it located?",
+    "answer": "Xiamen University Malaysia (XMUM) was officially established in 2016 and is located in Sepang, Selangor, near Kuala Lumpur.",
+    "keywords": [
+      "xmum",
+      "establishment",
+      "location"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What are the primary languages of instruction at Xiamen University Malaysia (XMUM)?",
+    "answer": "Mandarin and English are the primary languages of instruction at Xiamen University Malaysia (XMUM), offering students a bilingual advantage.",
+    "keywords": [
+      "xmum",
+      "languages",
+      "instruction"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "Are degrees awarded by Xiamen University Malaysia (XMUM) internationally recognized?",
+    "answer": "Yes, degrees awarded by Xiamen University Malaysia (XMUM) are internationally recognized.",
+    "keywords": [
+      "xmum",
+      "degrees",
+      "recognition"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What is the main website for Xiamen University Malaysia?",
+    "answer": "The main website for Xiamen University Malaysia is www.xmu.edu.my.",
+    "keywords": [
+      "website",
+      "malaysia",
+      "url",
+      "contact"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What is the general enquiry phone number for the Malaysia Campus?",
+    "answer": "The general enquiry phone number for the Malaysia Campus is +03 8800 6800.",
+    "keywords": [
+      "phone",
+      "general",
+      "malaysia",
+      "contact"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What is the phone number for course and enrollment enquiries at the Malaysia Campus?",
+    "answer": "The phone number for course and enrollment enquiries at the Malaysia Campus is +03 7610 2079.",
+    "keywords": [
+      "enrollment",
+      "courses",
+      "phone",
+      "malaysia"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What is the physical address of Xiamen University Malaysia Campus?",
+    "answer": "The physical address of Xiamen University Malaysia Campus is Jalan Sunsuria, Bandar Sunsuria, 43900 Sepang, Selangor Darul Ehsan, Malaysia.",
+    "keywords": [
+      "address",
+      "malaysia",
+      "location",
+      "campus"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "How can prospective local students contact Xiamen University Malaysia?",
+    "answer": "Prospective local students can contact Xiamen University Malaysia via email at enquiry@xmu.edu.my.",
+    "keywords": [
+      "local",
+      "student",
+      "email",
+      "enquiry"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What is the email address for international student enquiries?",
+    "answer": "The email address for international student enquiries is int.enquiry@xmu.edu.my.",
+    "keywords": [
+      "international",
+      "student",
+      "email",
+      "contact"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What is the estimated train travel time from KLIA to Salak Tinggi ERL station?",
+    "answer": "The estimated train travel time from KLIA to Salak Tinggi ERL station is 7 minutes.",
+    "keywords": [
+      "train",
+      "klia",
+      "travel",
+      "duration"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What is the estimated car travel time from KLIA to Xiamen University Malaysia Campus?",
+    "answer": "The estimated car travel time from KLIA to Xiamen University Malaysia Campus is 20 minutes (approximately 15.3km).",
+    "keywords": [
+      "car",
+      "travel",
+      "klia",
+      "distance"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What is the contact email for accommodation enquiries?",
+    "answer": "The contact email for accommodation enquiries is studentaccommodation@xmu.edu.my.",
+    "keywords": [
+      "accommodation",
+      "housing",
+      "email",
+      "student"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What are the website and phone numbers for the Xiamen University China Office?",
+    "answer": "The website for the China Office is xmu.edu.cn and the phone numbers are +86 592 2183989 / 2188700.",
+    "keywords": [
+      "china",
+      "office",
+      "contact",
+      "phone"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "In an event of an emergency, who should be contacted?",
+    "answer": "In an event of an emergency, students should call the 24-hour XMUM Emergency Helpline - 0193489999. They could also contact the police stations in Sepang, Dengkil and Bandar Baru Salak Tinggi, by calling the numbers 03-31421222, 03-87686222 and 03-87774484 respectively.",
+    "keywords": [
+      "emergency",
+      "contact",
+      "helpline",
+      "police"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "How can users stay updated on changes to the library's operating hours?",
+    "answer": "Operating hours are subject to change; users should refer to the latest announcements on the library website or contact librarian@xmu.edu.my.",
+    "keywords": [
+      "hours",
+      "changes",
+      "contact",
+      "website"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What is the Student Helpdesk at Xiamen University Malaysia (XMUM)?",
+    "answer": "The Student Helpdesk acts as the first point of contact for students to Xiamen University Malaysia (XMUM).",
+    "keywords": [
+      "helpdesk",
+      "contact",
+      "xmum",
+      "students"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "When is the campus email address and initial password provided?",
+    "answer": "The campus email address and initial password are provided during student registration for students or on-boarding for staff.",
+    "keywords": [
+      "provision",
+      "registration",
+      "onboarding",
+      "student email",
+      "campus email",
+      "password",
+      "password reset"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What is the format for a campus email address?",
+    "answer": "The campus email address format is CampusID@xmu.edu.my.",
+    "keywords": [
+      "format",
+      "address",
+      "example",
+      "student email",
+      "campus email"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What happens to my campus email account after I leave or graduate from the University?",
+    "answer": "Your campus email address will be inactivated and eventually removed immediately once you have left or graduated from the University.",
+    "keywords": [
+      "inactivation",
+      "graduation",
+      "removal",
+      "student email",
+      "campus email"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "How do I archive my campus emails?",
+    "answer": "You can archive your emails, contacts, and calendar items by exporting them to the Outlook app using a .pst file. Further step-by-step guides are available.",
+    "keywords": [
+      "archive",
+      "emails",
+      ".pst file",
+      "student email",
+      "campus email"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What is the main role of the Student Helpdesk at Xiamen University Malaysia?",
+    "answer": "The Student Helpdesk acts as the first point of contact for students to Xiamen University Malaysia (XMUM).",
+    "keywords": [
+      "role",
+      "contact",
+      "students",
+      "xmum"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "How can users get assistance with WIFI issues?",
+    "answer": "Users can visit the IT Office A3-103 (1F) during working hours, email IT at it@xmu.edu.my, or raise an 'AskA' request for further assistance.",
+    "keywords": [
+      "support",
+      "contact",
+      "it",
+      "assistance",
+      "it services"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What are the office hours for the Academic Affairs Office?",
+    "answer": "The Academic Affairs Office (Room A3#702) is open Monday to Friday from 8:30 am to 5:30 pm, with a lunch break from 12:30 pm to 1:30 pm.",
+    "keywords": [
+      "academic affairs",
+      "office hours",
+      "contact"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What are the contact details and office hours for the Finance Office?",
+    "answer": "The Finance Office (Room A3-7-11) is open Monday to Friday from 9:00 am to 5:00 pm. Email: finance@xmu.edu.my, Phone: 03-8800 6856.",
+    "keywords": [
+      "finance office",
+      "contact",
+      "office hours"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What are the contact details and office hours for the Student Affairs Office?",
+    "answer": "The Student Affairs Office (Room B1 # 107) is open Monday to Friday from 8:30 am to 5:30 pm. International Student Affairs Office email: internationaloffice@xmu.edu.my, Phone: 03-8800 6838 / 03-8705 5048.",
+    "keywords": [
+      "student affairs",
+      "contact",
+      "office hours"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What are the contact details and office hours for the Counselling Centre?",
+    "answer": "The Counselling Centre (Room B1 # 111) is open Monday to Friday from 8:30 am to 5:30 pm. Email: counselling@xmu.edu.my, Phone: 03-8705 5059.",
+    "keywords": [
+      "counselling centre",
+      "contact",
+      "office hours"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What are the contact details and office hours for the International Student Affairs Office?",
+    "answer": "The International Student Affairs Office (Room B1 # 104) is open Monday to Friday from 9:00 am to 5:00 pm. Email: internationaloffice@xmu.edu.my, Phone: 03-8800 6838 / 03-8705 5048.",
+    "keywords": [
+      "international student",
+      "contact",
+      "office hours"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What are the contact details and office hours for Extra-Curricular Activities (ECA)?",
+    "answer": "Extra-Curricular Activities (Room B1 # B1-103) is open Monday to Friday from 8:30 am to 5:30 pm. Email: ECA@xmu.edu.my, Phone: 03-8800 6818.",
+    "keywords": [
+      "eca",
+      "contact",
+      "office hours"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What are the administrative charges for room key replacement or room unlock services?",
+    "answer": "The administrative charge for room key replacement or room unlock services is RM20.00 during office hours (Mon-Fri, 9 am-6 pm) and RM30.00 during non-office hours (Mon-Sun, 6 pm-10 pm, including public holidays).",
+    "keywords": [
+      "residences",
+      "key replacement",
+      "fees"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What are the contact details for The English Lounge?",
+    "answer": "Email: eled@xmu.edu.my or jennymaganran@xmu.edu.my. Phone: 03-8880 5112 or 017-674 0300.",
+    "keywords": [
+      "english lounge",
+      "contact",
+      "phone"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What are the contact details for the Library's Circulation Counter?",
+    "answer": "The Library's Circulation Counter (A3-2nd Floor) phone number is 03-8800 6801. Email: librarian@xmu.edu.my.",
+    "keywords": [
+      "library",
+      "contact",
+      "circulation"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What are the contact details and office hours for the IT Department?",
+    "answer": "The IT Department (B1-G09, A3-1st Floor-103) is open Monday - Friday from 8:30 am to 5:30 pm. Phone: 03-8705 5003, 03-8705 5014. Email: ITService@xmu.edu.my.",
+    "keywords": [
+      "it",
+      "contact",
+      "office hours"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What should students do if they smell smoke or see fire on campus?",
+    "answer": "They should immediately activate the fire alarm system, evacuate the building to the nearest designated Emergency Assembly Point without using lifts, and contact Security (019-348 9999).",
+    "keywords": [
+      "fire safety",
+      "emergency",
+      "procedures"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What are the emergency contact numbers for Police Stations near XMUM?",
+    "answer": "Bandar Baru Salak Tinggi Police: 03-8777 4484. Dengkil Police: 03-8768 6222. Sepang Police: 03-8777 4222.",
+    "keywords": [
+      "emergency",
+      "police",
+      "contact"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What are the emergency contact numbers for Fire Brigades near XMUM?",
+    "answer": "Sepang Fire Brigade: 03-3142 1333. Kuala Lumpur International Airport (KLIA) Fire Brigade: 03-8787 4970.",
+    "keywords": [
+      "emergency",
+      "fire brigade",
+      "contact"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "How can students request maintenance services?",
+    "answer": "Students can log in to http://app.xmu.edu.my/maintenance to report defects through the online maintenance reporting system. For emergencies, contact the Maintenance Hotline: 017-313 5947.",
+    "keywords": [
+      "maintenance",
+      "request",
+      "hotline"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What are the contact details and office hours for the Operations and Maintenance Department?",
+    "answer": "The Operations and Maintenance Department (Room B11 # G13) is open Monday to Friday from 8:30 am to 5:30 pm. Maintenance Hotline: 017-313 5947. Security Hotline: 019-348 9999.",
+    "keywords": [
+      "operations",
+      "maintenance",
+      "contact",
+      "hours"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "How can students make an appointment for counselling?",
+    "answer": "Students can make an appointment by filling in the online form at https://forms.office.com/r/thC285mjta, or by visiting the Counselling Centre in room B1-110 during office hours.",
+    "keywords": [
+      "appointment",
+      "schedule",
+      "contact",
+      "form"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What is the recommended practice for staff when activating the \"out of office\" facility for emails?",
+    "answer": "Messages should name an alternative member of staff for correspondents to contact if necessary, to ensure important messages are addressed within required timescales.",
+    "keywords": [
+      "staff email",
+      "out of office",
+      "practice",
+      "contact",
+      "it services"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "Where is the ECA Department located?",
+    "answer": "The ECA Department is located at B1 #103, Xiamen University Malaysia, Jalan Sunsuria, Bandar Sunsuria, 43900 Sepang, Selangor.",
+    "keywords": [
+      "location",
+      "contact",
+      "address",
+      "department"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What are the operating hours for the ECA Department?",
+    "answer": "The ECA Department operates Monday - Friday, from 8.30am - 5.30pm.",
+    "keywords": [
+      "operating hours",
+      "contact",
+      "office hours"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What is the contact email for the ECA Department?",
+    "answer": "The contact email for the ECA Department is ECA@xmu.edu.my.",
+    "keywords": [
+      "email",
+      "contact",
+      "address"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "Who should be contacted for admissions inquiries at XMUM?",
+    "answer": "For admissions inquiries, you can contact admissions@xmu.edu.my.",
+    "keywords": [
+      "admissions",
+      "contact",
+      "email",
+      "inquiry"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "How do I set or reset my Campus ID password?",
+    "answer": "Upon receiving your Campus ID, you need to access https://id.xmu.edu.my to set or reset your password. A link will be sent to your Campus Email Address (Outlook Inbox/Spam/Junk).",
+    "keywords": [
+      "password",
+      "reset",
+      "set",
+      "email"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "How can I get assistance for Campus ID related issues?",
+    "answer": "For further assistance, you can email it@xmu.edu.my or raise an AskA request. IT support attends to requests during working hours (Monday-Friday).",
+    "keywords": [
+      "assistance",
+      "support",
+      "it",
+      "contact"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "Where is the Career Services Office located?",
+    "answer": "The Career Services Office is located at B1-107.",
+    "keywords": [
+      "location",
+      "office",
+      "b1-107",
+      "contact"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What is the official contact email for the International Student Affairs Office (ISAO)?",
+    "answer": "The official contact email for the International Student Affairs Office (ISAO) at Xiamen University Malaysia is internationaloffice@xmu.edu.my.",
+    "keywords": [
+      "isao",
+      "contact",
+      "email"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "How can students contact the International Student Affairs Office (ISAO)?",
+    "answer": "Students can contact the ISAO at their office location (B1-104), by phone (+603-88006838), or via email (internationaloffice@xmu.edu.my). Office hours are 9am to 5pm.",
+    "keywords": [
+      "isao",
+      "contact",
+      "phone",
+      "email"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "Who should international students contact regarding scholarships?",
+    "answer": "International students seeking information on scholarships should contact the International Student Recruitment Office.",
+    "keywords": [
+      "international",
+      "contact",
+      "office",
+      "scholarships"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "Which official contact should parents use for admission, fees, and campus visit arrangements?",
+    "answer": "For admission enquiries and campus visit arrangements, parents should start with the Admissions contact at admissions@xmu.edu.my. For fee-specific payment or invoice matters, contact the Finance Office at finance@xmu.edu.my or 03-8800 6856. For final confirmation, use the latest contact information on XMUM official channels.",
+    "keywords": [
+      "parent call xmum",
+      "parents contact",
+      "admission fees campus visit",
+      "campus visit arrangements",
+      "official contact admission fees",
+      "admissions contact",
+      "admission enquiries",
+      "finance contact",
+      "campus visit contact"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "Where can I find official office hours?",
+    "answer": "Official office hours are listed in the relevant office contact information. Common office hours in the local database are Monday to Friday, usually 8:30 am to 5:30 pm for many student-facing offices, while some offices differ, such as Finance Office 9:00 am to 5:00 pm and ISAO 9:00 am to 5:00 pm. Always confirm with the specific office for the latest official hours.",
+    "keywords": [
+      "official office hours",
+      "where can i find official office hours",
+      "office hours",
+      "official hours",
+      "working hours",
+      "counter hours",
+      "office operating hours"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What topics are covered in the International Student Handbook?",
+    "answer": "The handbook covers Introduction, International Student Pre-Arrival Guidelines, International Student Post-Arrival Guidelines, and Rules and Regulations for International Students.",
+    "keywords": [
+      "handbook",
+      "topics",
+      "guide"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What is the first step an international student must take after receiving an Offer Letter from Xiamen University Malaysia?",
+    "answer": "Upon receiving an Offer Letter, students must confirm their acceptance by signing and returning the acceptance form.",
+    "keywords": [
+      "offer letter",
+      "acceptance",
+      "pre-arrival"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "How soon after arrival must international students undergo medical screening in Malaysia?",
+    "answer": "All international students must undergo a medical screening at an approved Malaysian clinic within 7 days of arrival.",
+    "keywords": [
+      "medical screening",
+      "post-arrival",
+      "health"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What are the eligibility criteria for an international student to defer their studies at Xiamen University Malaysia?",
+    "answer": "Students cannot defer during their first semester, deferment is allowed only once during the entire programme duration, valid supporting documents must be provided, and the deferment period must comply with the university’s maximum allowable duration.",
+    "keywords": [
+      "deferment",
+      "eligibility",
+      "criteria"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "Can international students participate in political activities or demonstrations in Malaysia?",
+    "answer": "No, international students are strictly prohibited from participating in political activities, protests, or demonstrations in Malaysia, with consequences including immediate arrest, legal prosecution, deportation, and blacklisting.",
+    "keywords": [
+      "political activities",
+      "prohibition",
+      "demonstrations"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What driving documents are required for international students to drive in Malaysia?",
+    "answer": "International students must hold a valid Malaysian or International Driving Permit (IDP) to drive in Malaysia, along with valid road tax and insurance.",
+    "keywords": [
+      "driving",
+      "license",
+      "idp",
+      "regulations"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What is the expected general code of conduct for international students on campus?",
+    "answer": "International students are expected to maintain a high standard of respect, professionalism, and integrity, including respect for authority, peers, diversity, and campus property.",
+    "keywords": [
+      "code of conduct",
+      "campus",
+      "respect"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "about_xmum",
+    "question": "What are the consequences of disrespectful or inappropriate behavior on campus?",
+    "answer": "Consequences can include a formal warning or counseling, disciplinary action (suspension, probation, or expulsion), and legal action for serious offenses such as harassment or threats.",
+    "keywords": [
+      "disrespect",
+      "consequences",
+      "disciplinary"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "What types of assistance and services does the Student Helpdesk provide?",
+    "answer": "The Student Helpdesk provides assistance and services mainly for Student Vehicle Registration, Feedback, Lost and Found, Student Verification, Student Personal Accident Insurance, and PTPTN Enquiries.",
+    "keywords": [
+      "services",
+      "assistance",
+      "helpdesk",
+      "student"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "Does the Student Helpdesk assist with student vehicle registration?",
+    "answer": "Yes, the Student Helpdesk provides assistance for Student Vehicle Registration.",
+    "keywords": [
+      "vehicle",
+      "registration",
+      "student",
+      "campus"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "Can students provide feedback through the Student Helpdesk?",
+    "answer": "Yes, the Student Helpdesk provides services for students to submit Feedback.",
+    "keywords": [
+      "feedback",
+      "suggestions",
+      "student"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "Where can students report lost items or inquire about found items?",
+    "answer": "Students can utilize the Student Helpdesk for Lost and Found services.",
+    "keywords": [
+      "lost",
+      "found",
+      "items",
+      "helpdesk"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "For what purposes does the Student Helpdesk offer Student Verification?",
+    "answer": "The Student Helpdesk offers Student Verification for purposes such as lost/damaged student ID card reports and public transport discount card registration.",
+    "keywords": [
+      "verification",
+      "id card",
+      "transport",
+      "discount"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "Does the Student Helpdesk provide services related to student personal accident insurance?",
+    "answer": "Yes, the Student Helpdesk provides services concerning Student Personal Accident Insurance.",
+    "keywords": [
+      "insurance",
+      "accident",
+      "personal",
+      "student"
+    ]
+  },
+  {
+    "module": "admin_directory",
+    "sub_intent": "contact_us",
+    "question": "Can students make PTPTN enquiries at the Student Helpdesk?",
+    "answer": "Yes, the Student Helpdesk handles PTPTN Enquiries.",
+    "keywords": [
+      "ptptn",
+      "enquiries",
+      "financial",
+      "loan"
+    ]
+  }
+]

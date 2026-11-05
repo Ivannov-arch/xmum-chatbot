@@ -3,3 +3,6 @@
 
 # No need to store the pnpm store twice.
 .local
+.migration-backup
+.pytest_cache
+**/__pycache__

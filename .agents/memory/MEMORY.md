@@ -1,0 +1,1 @@
+- [Migration boundaries](migration-boundaries.md) — preserve Supabase and the original Python chatbot; no database replacement or redesign.
