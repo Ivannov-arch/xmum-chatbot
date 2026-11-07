@@ -229,7 +229,7 @@ export default function WelcomeChat() {
                 <BookOpen size={17} />
               </button>
               <div>
-                <span className="xw-overline">ASK XIAO JIA</span>
+                <span className="xw-overline">ASK CAPTAIN KAH KEE</span>
                 <h1>Your campus, a little closer.</h1>
               </div>
               <span className="xw-live-tag"><i /> HERE TO HELP</span>
@@ -240,7 +240,7 @@ export default function WelcomeChat() {
                 <div className="xw-empty-chat">
                   <div className="xw-guide-seal"><Compass size={23} /></div>
                   <span className="xw-overline">A NOTE FROM YOUR GUIDE</span>
-                  <h2>Hi, I’m Xiao Jia.</h2>
+                  <h2>Hi, I’m Captain Kah Kee.</h2>
                   <p>Ask me about studying, getting around, or settling in. We can start with one small thing.</p>
                   <div className="xw-prompt-list">
                     {welcomePrompts.map((prompt) => (
@@ -257,7 +257,7 @@ export default function WelcomeChat() {
                     <article className={`xw-message xw-message-${message.role}`} key={message.id}>
                       {message.role === "guide" && <span className="xw-message-avatar"><Compass size={15} /></span>}
                       <div className="xw-message-body">
-                        <span className="xw-message-author">{message.role === "student" ? "YOU" : "XIAO JIA"} <i>·</i> {message.role === "student" ? "JUST NOW" : "CAMPUS GUIDE"}</span>
+                        <span className="xw-message-author">{message.role === "student" ? "YOU" : "CAPTAIN KAH KEE"} <i>·</i> {message.role === "student" ? "JUST NOW" : "CAMPUS GUIDE"}</span>
                         <p>{message.text}</p>
                       </div>
                     </article>
@@ -306,7 +306,7 @@ export default function WelcomeChat() {
         </button>
         <div className="xw-site-place"><span /> XIAMEN · XIANG’AN CAMPUS</div>
         <button className="xw-header-ask" onClick={() => startChat()} type="button">
-          Ask Xiao Jia <ArrowUpRight size={15} />
+          Ask Captain Kah Kee <ArrowUpRight size={15} />
         </button>
       </header>
 
@@ -317,7 +317,7 @@ export default function WelcomeChat() {
           <p className="xw-hero-description">Find the little answers that help your day fall into place—from your first class to your trip back across campus.</p>
           <div className="xw-hero-actions">
             <button className="xw-primary-cta" onClick={() => startChat()} type="button">
-              Ask Xiao Jia <ArrowUpRight size={17} />
+              Ask Captain Kah Kee <ArrowUpRight size={17} />
             </button>
             <button className="xw-secondary-cta" onClick={() => document.getElementById("xw-topic-start")?.scrollIntoView({ behavior: "smooth" })} type="button">
               Browse topics <ArrowRight size={15} />
@@ -345,7 +345,7 @@ export default function WelcomeChat() {
             <span className="xw-eyebrow"><span className="xw-eyebrow-line" /> START WITH WHAT YOU NEED</span>
             <h2>Where should we begin?</h2>
           </div>
-          <p>Pick a starting point.<br />Xiao Jia can take it from there.</p>
+          <p>Pick a starting point.<br />Captain Kah Kee can take it from there.</p>
         </div>
         <div className="xw-topic-grid">
           {topics.map((topic, index) => {
