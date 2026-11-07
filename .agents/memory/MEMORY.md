@@ -1,1 +1,2 @@
 - [Migration boundaries](migration-boundaries.md) — preserve Supabase and the original Python chatbot; no database replacement or redesign.
+- [Site language and hosting](site-language-and-hosting.md) — the main website is English and is deployed on Render and Vercel.
