@@ -76,6 +76,7 @@ const guides: Guide[] = [
 const categories = ["All guides", "Getting around", "Places", "Food & drink", "Getting settled"];
 
 export default function Routeboard() {
+  const [view, setView] = useState<"home" | "guides">("home");
   const [category, setCategory] = useState("All guides");
   const [expanded, setExpanded] = useState<string | null>(guides[0].title);
   const [query, setQuery] = useState("");
@@ -105,6 +106,14 @@ export default function Routeboard() {
     setSaved((current) => current.includes(title) ? current.filter((item) => item !== title) : [...current, title]);
   };
 
+  const openGuides = (nextCategory = "All guides", nextQuery = "") => {
+    setCategory(nextCategory);
+    setQuery(nextQuery);
+    setAnswer("");
+    setView("guides");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const chooseGuide = (guide: Guide) => {
     setExpanded((current) => current === guide.title ? null : guide.title);
     setAnswer("");
@@ -113,17 +122,64 @@ export default function Routeboard() {
   return (
     <main className="rb-shell">
       <header className="rb-topbar">
-        <a className="rb-brand" href="#top" aria-label="Furong Buddy home">
+          <a className="rb-brand" href="#top" onClick={(event) => { event.preventDefault(); setView("home"); window.scrollTo({ top: 0, behavior: "smooth" }); }} aria-label="Furong Buddy home">
           <span className="rb-brand-mark"><Compass size={18} /></span>
           <span>FURONG <b>BUDDY</b></span>
         </a>
         <div className="rb-campus"><i /> SIMING CAMPUS <span>·</span> XIAMEN, CHINA</div>
-        <button className={`rb-notice ${showNotice ? "is-open" : ""}`} onClick={() => setShowNotice((open) => !open)} type="button" aria-label="Campus notices">
-          <Bell size={16} /><span>1</span>
-        </button>
+        <div className="rb-top-actions">
+          <button className="rb-home-action" type="button" onClick={() => view === "home" ? openGuides() : (setView("home"), window.scrollTo({ top: 0, behavior: "smooth" }))}>
+            {view === "home" ? "Explore campus" : "Back home"} <ArrowUpRight size={14} />
+          </button>
+          <button className={`rb-notice ${showNotice ? "is-open" : ""}`} onClick={() => setShowNotice((open) => !open)} type="button" aria-label="Campus notices">
+            <Bell size={16} /><span>1</span>
+          </button>
+        </div>
         {showNotice && <div className="rb-notice-pop"><b>A quick note</b><p>Shuttle times can change. Check the student portal before setting off.</p><button type="button" onClick={() => setShowNotice(false)} aria-label="Dismiss notice"><X size={14} /></button></div>}
       </header>
 
+      {view === "home" ? (
+        <>
+          <section className="rb-home" id="top">
+            <div className="rb-home-copy">
+              <div className="rb-overline"><span>✳</span> YOUR XMUM CAMPUS COMPANION <i /></div>
+              <h1>Find your way.<br /><em>Feel at home.</em></h1>
+              <p>New to campus or just planning your day? Xiao Jia knows the little things that make life here easier.</p>
+              <div className="rb-home-actions">
+                <button className="rb-primary-cta" type="button" onClick={() => openGuides()}>
+                  Explore campus help <ArrowUpRight size={16} />
+                </button>
+                <button className="rb-secondary-cta" type="button" onClick={() => openGuides("Places")}>
+                  Find a place <MapPin size={15} />
+                </button>
+              </div>
+              <div className="rb-welcome-foot"><span className="rb-avatar">XJ</span><span><b>Xiao Jia</b> · your friendly digital senior</span><span className="rb-live"><i /> HERE TO HELP</span></div>
+            </div>
+            <aside className="rb-home-feature">
+              <div className="rb-feature-mark"><Compass size={22} /></div>
+              <div className="rb-feature-top"><Sun size={15} /> A GOOD DAY STARTS HERE <span>01 / 03</span></div>
+              <p className="rb-feature-kicker">A little local know-how.</p>
+              <h2>Campus life<br /><em>is yours to explore.</em></h2>
+              <p className="rb-feature-description">From the shuttle stop to a quiet lunch spot, find one good next step at a time.</p>
+              <button type="button" className="rb-feature-link" onClick={() => openGuides()}>See what you need <ArrowRight size={15} /></button>
+              <div className="rb-route-art" aria-hidden="true"><i /><i /><i /><span><MapPin size={15} /></span></div>
+            </aside>
+          </section>
+          <section className="rb-home-discover" aria-label="Explore campus help">
+            <div className="rb-discover-heading">
+              <div><div className="rb-overline rb-overline-dark"><span>01</span> START WHERE YOU ARE</div><h2>What would make today easier?</h2></div>
+              <p>Small questions welcome.<br />Big days, too.</p>
+            </div>
+            <div className="rb-quick-links">
+              <button type="button" onClick={() => openGuides("Getting around")}><span className="rb-quick-icon"><Bus size={19} /></span><span><small>GETTING AROUND</small><b>Plan a campus trip</b><em>Shuttles, routes & timing</em></span><ArrowUpRight size={17} /></button>
+              <button type="button" onClick={() => openGuides("Food & drink")}><span className="rb-quick-icon rb-quick-gold"><Utensils size={19} /></span><span><small>FOOD & DRINK</small><b>Find a good lunch</b><em>Easy eats around campus</em></span><ArrowUpRight size={17} /></button>
+              <button type="button" onClick={() => openGuides("Getting settled")}><span className="rb-quick-icon rb-quick-blue"><BookOpen size={19} /></span><span><small>NEW AROUND HERE?</small><b>Get settled in</b><em>The first-week essentials</em></span><ArrowUpRight size={17} /></button>
+            </div>
+          </section>
+          <footer className="rb-footer"><span><ArrowDownLeft size={14} /> A FRIENDLY GUIDE, NOT AN OFFICIAL NOTICE</span><span>XMUM STUDENT LIFE <b>✳</b> XIAMEN, CHINA</span></footer>
+        </>
+      ) : (
+        <>
       <section className="rb-welcome" id="top">
         <div className="rb-welcome-copy">
           <div className="rb-overline"><span>✳</span> YOUR XMUM FIELD GUIDE <i /></div>
@@ -185,6 +241,8 @@ export default function Routeboard() {
       </section>
 
       <footer className="rb-footer"><span><ArrowDownLeft size={14} /> A FRIENDLY GUIDE, NOT AN OFFICIAL NOTICE</span><span>XMUM STUDENT LIFE <b>✳</b> XIAMEN, CHINA</span></footer>
+        </>
+      )}
     </main>
   );
 }
