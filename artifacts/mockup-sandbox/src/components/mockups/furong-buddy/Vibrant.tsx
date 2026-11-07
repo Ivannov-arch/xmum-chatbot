@@ -1,27 +1,39 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import {
-  ArrowDown,
   ArrowUpRight,
+  BookOpen,
   Bus,
-  ChevronDown,
+  CircleHelp,
+  Clock3,
   Compass,
+  FileQuestion,
   MapPin,
   Menu,
   Plus,
+  Search,
   Send,
   Sparkles,
-  Sun,
+  Utensils,
+  Wifi,
   X,
 } from "lucide-react";
-import "./_group.css";
+import "./Vibrant.css";
 
 type ChatMessage = { id: number; role: "buddy" | "student"; text: string; time: string };
 
 const starterQuestions = [
   { icon: Bus, label: "Campus bus times" },
   { icon: MapPin, label: "Find Furong Tunnel" },
-  { icon: Sun, label: "Best lunch nearby" },
-  { icon: Compass, label: "Freshman checklist" },
+  { icon: Utensils, label: "Where to eat" },
+  { icon: Compass, label: "First-week essentials" },
+];
+
+const campusFaqs = [
+  { group: "Study & services", question: "Library opening hours", icon: BookOpen },
+  { group: "Study & services", question: "Scholarship requirements", icon: FileQuestion },
+  { group: "Getting connected", question: "Connect to campus Wi-Fi", icon: Wifi },
+  { group: "Getting around", question: "Inter-campus bus schedule", icon: Bus },
+  { group: "Campus life", question: "Cafeteria and food options", icon: Utensils },
 ];
 
 const initialMessages: ChatMessage[] = [
@@ -67,8 +79,16 @@ export default function Vibrant() {
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [faqSearch, setFaqSearch] = useState("");
+  const [suggestionOpen, setSuggestionOpen] = useState(false);
+  const [suggestionText, setSuggestionText] = useState("");
+  const [toast, setToast] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
+  const replyTimer = useRef<number | undefined>(undefined);
+
+  const filteredFaqs = campusFaqs.filter((faq) =>
+    `${faq.group} ${faq.question}`.toLowerCase().includes(faqSearch.toLowerCase()),
+  );
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -81,7 +101,7 @@ export default function Vibrant() {
     setMessages((current) => [...current, { id: Date.now(), role: "student", text, time: now }]);
     setInput("");
     setTyping(true);
-    window.setTimeout(() => {
+    replyTimer.current = window.setTimeout(() => {
       setMessages((current) => [
         ...current,
         { id: Date.now() + 1, role: "buddy", text: answerFor(text), time: now },
@@ -96,135 +116,150 @@ export default function Vibrant() {
   };
 
   const resetChat = () => {
+    window.clearTimeout(replyTimer.current);
     setMessages(initialMessages);
+    setInput("");
+    setTyping(false);
     setMenuOpen(false);
   };
 
-  return (
-    <main className="fb-page">
-      <div className="fb-topline">
-        <div className="fb-brand">
-          <div className="fb-brand-mark"><Compass size={18} strokeWidth={2.3} /></div>
-          <span>XMUM <b>·</b> CAMPUS LIFE</span>
-        </div>
-        <div className="fb-campus-tag"><span /> SIMING CAMPUS <span className="fb-tag-sep">/</span> XIAMEN, CHINA</div>
-        <button className="fb-help-link" type="button" onClick={() => sendMessage("What can you help me with?")}>How can I help? <ArrowUpRight size={14} /></button>
-      </div>
+  const submitSuggestion = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!suggestionText.trim()) return;
+    setSuggestionOpen(false);
+    setSuggestionText("");
+    setToast("Thanks — your question has been noted for the campus team.");
+    window.setTimeout(() => setToast(""), 2800);
+  };
 
-      <div className="fb-layout">
-        <aside className="fb-rail">
-          <div className="fb-rail-copy">
-            <span className="fb-eyebrow"><span className="fb-eyebrow-star">✳</span> YOUR CAMPUS, UNLOCKED</span>
-            <h1>A little<br />help goes<br /><em>a long way.</em></h1>
-            <p>New here, or just figuring out today? Your friendly campus senior is always around.</p>
-            <div className="fb-rail-rule" />
-            <div className="fb-rail-quote">
-              <span className="fb-quote-mark">“</span>
-              <p>Best advice I got as a freshman: ask early, explore often.</p>
-              <small>— A senior who’s been there</small>
-            </div>
+  return (
+    <main className="xm-chat-app">
+      <header className="xm-topbar">
+        <div className="xm-brand">
+          <span className="xm-brand-mark"><Compass size={19} /></span>
+          <span><b>XMUM</b><strong>Campus Assistant</strong></span>
+        </div>
+        <div className="xm-campus-location"><i /> SIMING CAMPUS <span>/</span> XIAMEN, CHINA</div>
+        <button type="button" className="xm-new-chat" onClick={resetChat}><Plus size={15} /> New chat</button>
+      </header>
+
+      <div className="xm-workspace">
+        {menuOpen && <button className="xm-scrim" type="button" aria-label="Close campus index" onClick={() => setMenuOpen(false)} />}
+        <aside className={`xm-sidebar ${menuOpen ? "xm-sidebar-open" : ""}`} aria-label="Campus help topics">
+          <div className="xm-side-head">
+            <span className="xm-section-kicker"><span>01</span> CAMPUS INDEX</span>
+            <h2>Find an answer</h2>
+            <p>Good to know, right when you need it.</p>
+            <label className="xm-search">
+              <Search size={16} />
+              <input value={faqSearch} onChange={(event) => setFaqSearch(event.target.value)} placeholder="Search campus help" aria-label="Search campus help" />
+              <span>/</span>
+            </label>
           </div>
-          <div className="fb-rail-foot">
-            <span className="fb-sun-stamp"><Sparkles size={16} /></span>
-            <span>Made for the<br /><b>XMUM community</b></span>
-            <span className="fb-foot-index">01—04</span>
+          <div className="xm-faq-list">
+            {filteredFaqs.length === 0 ? (
+              <div className="xm-empty-search">No questions match that search.</div>
+            ) : (
+              Array.from(new Set(filteredFaqs.map((faq) => faq.group))).map((group) => (
+                <div className="xm-faq-group" key={group}>
+                  <span className="xm-faq-heading">{group}</span>
+                  {filteredFaqs.filter((faq) => faq.group === group).map(({ question, icon: Icon }) => (
+                    <button type="button" className="xm-faq-item" key={question} onClick={() => { sendMessage(question); setMenuOpen(false); }}>
+                      <Icon size={15} /><span>{question}</span><ArrowUpRight size={13} className="xm-faq-arrow" />
+                    </button>
+                  ))}
+                </div>
+              ))
+            )}
+          </div>
+          <div className="xm-side-bottom">
+            <div className="xm-note"><Sparkles size={16} /><span>One question can make<br />your day easier.</span></div>
+            <button type="button" className="xm-suggest" onClick={() => setSuggestionOpen(true)}><CircleHelp size={16} /> Suggest a question <ArrowUpRight size={13} /></button>
+            <span className="xm-side-meta">CAMPUS KNOW-HOW · 01—05</span>
           </div>
         </aside>
 
-        <section className="fb-chat-card" aria-label="Chat with Furong Buddy">
-          <header className="fb-chat-head">
-            <button className="fb-mobile-menu" type="button" aria-label="Open menu" onClick={() => setMenuOpen((open) => !open)}>
-              {menuOpen ? <X size={19} /> : <Menu size={19} />}
+        <section className="xm-chat" aria-label="Chat with XMUM Campus Assistant">
+          <header className="xm-chat-head">
+            <button type="button" className="xm-menu" aria-label="Open campus index" aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)}>
+              {menuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
-            <div className="fb-mascot-wrap">
-              <img src="/__mockup/images/xmum-mascot.jpg" alt="Xiao Jia, your XMUM campus guide" />
-              <span className="fb-online-dot" />
+            <div className="xm-avatar">
+              <img src="/__mockup/images/xmum-mascot.jpg" alt="Xiao Jia, XMUM campus guide" />
+              <i />
             </div>
-            <div className="fb-head-name">
-              <div className="fb-name-line"><strong>Furong Buddy</strong><span className="fb-captain-tag">YOUR DIGITAL SENIOR</span></div>
-              <span className="fb-presence"><i /> Xiao Jia is here · Usually replies instantly</span>
+            <div className="xm-agent-copy">
+              <div><strong>Xiao Jia</strong><span>CAMPUS BUDDY</span></div>
+              <small>Here to help with campus life</small>
             </div>
-            <button className="fb-head-more" type="button" onClick={resetChat} aria-label="Start a fresh chat" title="Start a fresh chat">
-              <Plus size={19} />
-            </button>
+            <div className="xm-live"><i /> <span>ONLINE</span><b>·</b> Replies are usually instant</div>
+            <button type="button" className="xm-reset" onClick={resetChat} aria-label="Start a fresh conversation" title="Start a fresh conversation"><Plus size={18} /></button>
           </header>
 
-          {menuOpen && (
-            <div className="fb-mobile-popover">
-              <strong>Quick campus help</strong>
-              <p>Ask Xiao Jia about your day at XMUM.</p>
-              <button type="button" onClick={resetChat}>Start a fresh chat <ArrowUpRight size={15} /></button>
-            </div>
-          )}
-
-          <div className="fb-chat-intro">
-            <span className="fb-today"><span /> TODAY, 10:41 AM <span className="fb-intro-line" /></span>
-            <p>Good morning, student.<br /><b>Where are we headed?</b></p>
-            <span className="fb-intro-scribble">let’s find out <ArrowDown size={13} /></span>
+          <div className="xm-chat-intro">
+            <div className="xm-intro-label"><span /> CAMPUS ASSISTANT <span className="xm-intro-rule" /></div>
+            <h1>Hi there.<br /><em>What can I help you figure out?</em></h1>
           </div>
 
-          <div className="fb-messages">
+          <div className="xm-messages" aria-live="polite">
             {messages.map((message) => (
-              <article key={message.id} className={`fb-message fb-message-${message.role}`}>
-                {message.role === "buddy" && (
-                  <div className="fb-tiny-avatar"><img src="/__mockup/images/xmum-mascot.jpg" alt="" /></div>
-                )}
-                <div className="fb-message-content">
-                  {message.role === "buddy" && <span className="fb-sender">XIAO JIA <span>·</span> CAMPUS BUDDY</span>}
-                  <div className="fb-bubble">{message.text}</div>
-                  <span className="fb-message-time">{message.time}</span>
+              <article className={`xm-message xm-message-${message.role}`} key={message.id}>
+                {message.role === "buddy" && <div className="xm-message-avatar"><img src="/__mockup/images/xmum-mascot.jpg" alt="" /></div>}
+                <div className="xm-message-body">
+                  {message.role === "buddy" && <span className="xm-sender">XIAO JIA <i>·</i> CAMPUS BUDDY</span>}
+                  <div className="xm-bubble">{message.text}</div>
+                  <time>{message.time}</time>
                 </div>
-                {message.role === "student" && <div className="fb-student-avatar">S</div>}
+                {message.role === "student" && <div className="xm-student-avatar">S</div>}
               </article>
             ))}
             {typing && (
-              <article className="fb-message fb-message-buddy">
-                <div className="fb-tiny-avatar"><img src="/__mockup/images/xmum-mascot.jpg" alt="" /></div>
-                <div className="fb-message-content"><span className="fb-sender">XIAO JIA <span>·</span> CAMPUS BUDDY</span><div className="fb-bubble fb-typing"><i /><i /><i /></div></div>
+              <article className="xm-message xm-message-buddy">
+                <div className="xm-message-avatar"><img src="/__mockup/images/xmum-mascot.jpg" alt="" /></div>
+                <div className="xm-message-body"><span className="xm-sender">XIAO JIA <i>·</i> CAMPUS BUDDY</span><div className="xm-bubble xm-typing"><i /><i /><i /></div></div>
               </article>
             )}
             {!typing && messages.length === initialMessages.length && (
-              <div className="fb-answer-card">
-                <div className="fb-answer-icon"><Bus size={17} /></div>
-                <div className="fb-answer-copy">
-                  <div className="fb-answer-top"><b>SIMING → XIANG’AN</b><span className="fb-answer-live"><i /> CAMPUS TIP</span></div>
-                  <strong>Give yourself a little runway.</strong>
-                  <p>Plan for 60–90 minutes on the road. Check the student portal for the latest shuttle notice before you set off.</p>
-                  <button type="button" onClick={() => sendMessage("Can you help me plan for my morning shuttle?")}>Help me plan my trip <ArrowUpRight size={14} /></button>
-                </div>
-                <span className="fb-card-spark">✳</span>
-              </div>
+              <aside className="xm-route-note">
+                <div className="xm-route-icon"><Bus size={17} /></div>
+                <div><span>SIMING <b>→</b> XIANG’AN <i /> TRAVEL NOTE</span><strong>Give yourself a little runway.</strong><p>Allow 60–90 minutes on the road. Check the student portal for the latest shuttle notice before you set off.</p></div>
+                <button type="button" aria-label="Ask for shuttle planning help" onClick={() => sendMessage("Can you help me plan for my morning shuttle?")}><ArrowUpRight size={16} /></button>
+              </aside>
             )}
             <div ref={bottomRef} />
           </div>
 
-          <div className="fb-suggestions">
-            <div className="fb-suggest-label"><span>✳</span> NEED A STARTING POINT?</div>
-            <div className="fb-chip-row">
+          <div className="xm-suggestions">
+            <div className="xm-suggestions-title"><span>QUICK START</span><span>Choose a topic, or ask your own question</span></div>
+            <div className="xm-chip-row">
               {starterQuestions.map(({ icon: Icon, label }) => (
-                <button type="button" className="fb-chip" key={label} onClick={() => sendMessage(label)} disabled={typing}>
-                  <Icon size={14} /> {label}
-                </button>
+                <button type="button" className="xm-chip" key={label} onClick={() => sendMessage(label)} disabled={typing}><Icon size={14} /> {label}</button>
               ))}
             </div>
           </div>
 
-          <form className="fb-composer" onSubmit={submit}>
-            <button className="fb-add-button" type="button" aria-label="Start a fresh chat" onClick={resetChat}><Plus size={19} /></button>
-            <input aria-label="Message Xiao Jia" value={input} onChange={(event) => setInput(event.target.value)} placeholder="Ask Xiao Jia anything about campus..." />
-            <button className="fb-send-button" type="submit" aria-label="Send message" disabled={!input.trim() || typing}><Send size={17} /></button>
+          <form className="xm-composer" onSubmit={submit}>
+            <button className="xm-composer-plus" type="button" aria-label="Start a fresh conversation" onClick={resetChat}><Plus size={18} /></button>
+            <input aria-label="Message Xiao Jia" value={input} onChange={(event) => setInput(event.target.value)} placeholder="Ask about classes, Wi-Fi, food, transport..." />
+            <button className="xm-send" type="submit" aria-label="Send message" disabled={!input.trim() || typing}><Send size={16} /></button>
           </form>
-          <div className="fb-composer-foot"><span>PRESS <b>ENTER</b> TO SEND</span><span>HERE FOR THE BIG THINGS &amp; THE LITTLE THINGS <span className="fb-heart">✳</span></span></div>
+          <div className="xm-composer-foot"><span>PRESS <b>ENTER</b> TO SEND</span><span>For schedule changes, check official XMUM notices.</span></div>
         </section>
       </div>
 
-      <footer className="fb-page-footer">
-        <span>XIAMEN UNIVERSITY MALAYSIA <b>·</b> STUDENT LIFE, A LITTLE EASIER</span>
-        <button type="button" onClick={() => { navigator.clipboard?.writeText("Furong Buddy · XMUM Campus Life"); setCopied(true); window.setTimeout(() => setCopied(false), 1800); }}>
-          {copied ? "COPIED" : "A FRIENDLY GUIDE, NOT AN OFFICIAL NOTICE"} <ChevronDown size={13} />
-        </button>
-      </footer>
-
+      {suggestionOpen && (
+        <div className="xm-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSuggestionOpen(false); }}>
+          <form className="xm-modal" onSubmit={submitSuggestion}>
+            <div className="xm-modal-top"><span><CircleHelp size={18} /></span><button type="button" aria-label="Close suggestion form" onClick={() => setSuggestionOpen(false)}><X size={18} /></button></div>
+            <small>HELP US MAKE THIS BETTER</small>
+            <h2>What should Xiao Jia know?</h2>
+            <p>Share a campus question you’d like to see answered here.</p>
+            <input autoFocus value={suggestionText} onChange={(event) => setSuggestionText(event.target.value)} placeholder="e.g. Where can I print after 6pm?" aria-label="Your suggested question" />
+            <div className="xm-modal-actions"><button type="button" onClick={() => setSuggestionOpen(false)}>Cancel</button><button type="submit" disabled={!suggestionText.trim()}>Send suggestion <ArrowUpRight size={14} /></button></div>
+          </form>
+        </div>
+      )}
+      {toast && <div className="xm-toast" role="status">{toast}</div>}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap');
         .fb-page{--red:#D7432F;--blue:#104E8B;--ivory:#FDFBF7;--white:#FFFFFF;--gold:#F5A623;--ink:#1F2937;--muted:#7B7F80;min-height:100dvh;background:var(--ivory);color:var(--ink);font-family:'DM Sans',sans-serif;padding:0 clamp(18px,5.6vw,88px);position:relative;overflow:hidden}
