@@ -9,6 +9,21 @@ import Logs from "./app/admin/logs/page";
 import Suggestions from "./app/admin/suggestions/page";
 import { ErrorBoundary } from "./components/error-boundary";
 
+function AdminSection() {
+  return (
+    <AdminLayout>
+      <Switch>
+        <Route path="/admin/login" component={AdminLogin} />
+        <Route path="/admin/knowledge" component={Knowledge} />
+        <Route path="/admin/logs" component={Logs} />
+        <Route path="/admin/suggestions" component={Suggestions} />
+        <Route path="/admin" component={AdminHome} />
+        <Route><p>Page not found.</p></Route>
+      </Switch>
+    </AdminLayout>
+  );
+}
+
 function Pages() {
   const [location] = useLocation();
   useEffect(() => {
@@ -22,18 +37,9 @@ function Pages() {
   return <ErrorBoundary resetKey={location}>
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/admin/:rest*">
-        <AdminLayout>
-          <Switch>
-            <Route path="/admin/login" component={AdminLogin} />
-            <Route path="/admin/knowledge" component={Knowledge} />
-            <Route path="/admin/logs" component={Logs} />
-            <Route path="/admin/suggestions" component={Suggestions} />
-            <Route path="/admin" component={AdminHome} />
-            <Route><p>Page not found.</p></Route>
-          </Switch>
-        </AdminLayout>
-      </Route>
+      {/* `/admin/:rest*` never matches bare `/admin`, which is where sign-in redirects. */}
+      <Route path="/admin" component={AdminSection} />
+      <Route path="/admin/:rest*" component={AdminSection} />
       <Route><p>Page not found. <a href="/">Return to chat</a></p></Route>
     </Switch>
   </ErrorBoundary>;
