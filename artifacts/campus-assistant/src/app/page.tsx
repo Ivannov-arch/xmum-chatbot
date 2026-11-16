@@ -859,57 +859,85 @@ export default function ChatbotHome() {
       {/* ──────────────── Suggestion Modal ──────────────── */}
       {suggestionTarget && (
         <div className="ca-modal-overlay fixed inset-0 z-[999] flex items-center justify-center bg-black/60 px-4">
-          <div className="ca-modal w-full max-w-md bg-slate-900 border border-white/10 rounded-2xl p-6 space-y-5 shadow-2xl">
-            <div className="flex items-center justify-between">
-              <h3 className="text-white font-bold text-lg flex items-center gap-2"><MessageSquarePlus size={19} /> Suggest a Question</h3>
+          <section
+            className="ca-modal ca-suggest-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="suggestion-modal-title"
+          >
+            <header className="ca-suggest-modal__header">
+              <div className="ca-suggest-modal__identity">
+                <span className="ca-suggest-modal__icon">
+                  <MessageSquarePlus size={21} aria-hidden="true" />
+                </span>
+                <div>
+                  <p className="ca-suggest-modal__eyebrow">XMUM CAMPUS ASSISTANT</p>
+                  <h3 id="suggestion-modal-title" className="ca-suggest-modal__title">Suggest a question</h3>
+                </div>
+              </div>
               <button
                 onClick={closeSuggestionForm}
-                className="text-slate-400 hover:text-white text-xl leading-none"
+                className="ca-suggest-modal__close"
+                aria-label="Close suggestion form"
                 type="button"
               >
-                ✕
+                <span aria-hidden="true">×</span>
               </button>
-            </div>
+            </header>
 
-            <p className="text-slate-400 text-sm">
+            <p className="ca-suggest-modal__description">
               Help us improve the chatbot by submitting a question we should know the answer to.
             </p>
 
-            <div className="space-y-3">
+            <div className="ca-suggest-modal__fields">
               <div>
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1.5">
-                  Your Question *
-                </label>
+                <div className="ca-suggest-modal__label-row">
+                  <label className="ca-suggest-modal__label" htmlFor="suggestion-question-input">
+                    Your question <span className="ca-suggest-modal__required">*</span>
+                  </label>
+                  <span className="ca-suggest-modal__optional">Required</span>
+                </div>
                 <input
                   id="suggestion-question-input"
                   type="text"
                   value={suggestionQuestion}
                   onChange={(e) => setSuggestionQuestion(e.target.value)}
                   placeholder="e.g. What time does the library close on weekends?"
-                  className="w-full rounded-lg bg-slate-800 border border-white/10 text-white px-4 py-2.5 text-sm placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                  className="ca-suggest-modal__input"
+                  aria-describedby="suggestion-question-help"
+                  required
                 />
+                <p id="suggestion-question-help" className="ca-suggest-modal__hint">
+                  Questions already in this chat are filled in for you.
+                </p>
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1.5">
-                  Your Answer{" "}
-                  <span className="text-slate-600 normal-case font-normal">(optional — share if you know it!)</span>
-                </label>
+                <div className="ca-suggest-modal__label-row">
+                  <label className="ca-suggest-modal__label" htmlFor="suggestion-answer-input">
+                    Suggested answer
+                  </label>
+                  <span className="ca-suggest-modal__optional">Optional</span>
+                </div>
                 <textarea
                   id="suggestion-answer-input"
                   value={suggestionAnswer}
                   onChange={(e) => setSuggestionAnswer(e.target.value)}
-                  placeholder="e.g. The library closes at 10pm on Saturday and Sunday."
-                  rows={3}
-                  className="w-full rounded-lg bg-slate-800 border border-white/10 text-white px-4 py-2.5 text-sm placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"
+                  placeholder="Share an answer if you know it."
+                  rows={4}
+                  className="ca-suggest-modal__textarea"
+                  aria-describedby="suggestion-answer-help"
                 />
+                <p id="suggestion-answer-help" className="ca-suggest-modal__hint">
+                  Only share an answer if you know it.
+                </p>
               </div>
             </div>
 
-            <div className="flex gap-3 pt-1">
+            <footer className="ca-suggest-modal__footer">
               <button
                 onClick={closeSuggestionForm}
-                className="flex-1 px-4 py-2.5 rounded-lg text-sm font-semibold border border-white/10 text-slate-400 hover:text-white hover:border-white/20 transition-all"
+                className="ca-suggest-modal__action ca-suggest-modal__cancel"
                 type="button"
               >
                 Cancel
@@ -918,13 +946,14 @@ export default function ChatbotHome() {
                 id="submit-suggestion-btn"
                 onClick={() => void handleSubmitSuggestion()}
                 disabled={!suggestionQuestion.trim() || suggestionSubmitting}
-                className="flex-1 px-4 py-2.5 rounded-lg text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-all disabled:opacity-40"
+                className="ca-suggest-modal__action ca-suggest-modal__submit"
+                aria-busy={suggestionSubmitting}
                 type="button"
               >
-                {suggestionSubmitting ? "Submitting..." : "Submit Suggestion"}
+                {suggestionSubmitting ? "Submitting…" : "Submit suggestion"}
               </button>
-            </div>
-          </div>
+            </footer>
+          </section>
         </div>
       )}
 
