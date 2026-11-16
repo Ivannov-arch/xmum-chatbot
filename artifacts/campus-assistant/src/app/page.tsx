@@ -5,6 +5,8 @@ import { Link } from "wouter";
 import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 import { getKnowledgeItems } from "@/services/knowledgeService";
 import { submitSuggestion } from "@/services/suggestionService";
+import CampusWelcomePage from "@/components/campus-welcome-page";
+import "./campus-assistant.css";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -77,6 +79,7 @@ export default function ChatbotHome() {
   );
 
   const [messages, setMessages] = useState<Message[]>([]);
+  const [currentView, setCurrentView] = useState<"welcome" | "chat">("welcome");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [inputVal, setInputVal] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -262,11 +265,11 @@ export default function ChatbotHome() {
     const greetingTimeout = setTimeout(() => {
       if (!alive) return;
 
-      setMessages([
+      setMessages((current) => current.length > 0 ? current : [
         {
           id: "greeting",
           role: "bot",
-          text: "Hi there! 👋 I'm <strong>XMUM Campus Assistant</strong>.<br/>Ask me anything — library, hostel, WiFi, scholarships, food, transport, and more!",
+          text: "Hi there! 👋 I'm <strong>Captain Kah Kee</strong>.<br/>Ask me anything — library, hostel, WiFi, scholarships, food, transport, and more!",
         },
       ]);
     }, 250);
@@ -391,6 +394,26 @@ export default function ChatbotHome() {
     setIsLoading(false);
   };
 
+  const startChat = (question?: string) => {
+    setCurrentView("chat");
+    setIsSidebarOpen(false);
+    if (question) {
+      void handleSend(question);
+    }
+  };
+
+  useEffect(() => {
+    if (currentView !== "chat") return;
+    const focusTimer = window.setTimeout(() => inputRef.current?.focus(), 100);
+    return () => window.clearTimeout(focusTimer);
+  }, [currentView]);
+
+  const startNewConversation = () => {
+    setMessages([]);
+    setInputVal("");
+    setIsSidebarOpen(false);
+  };
+
   // ───────────────────────────────────────────────────────────────────────────
   // Input key handler
   // ───────────────────────────────────────────────────────────────────────────
@@ -474,8 +497,12 @@ export default function ChatbotHome() {
   // Render
   // ───────────────────────────────────────────────────────────────────────────
 
+  if (currentView === "welcome") {
+    return <CampusWelcomePage onStartChat={startChat} />;
+  }
+
   return (
-    <div className="relative flex h-screen w-full overflow-hidden bg-slate-900">
+    <div className="ca-chat-app relative flex h-screen w-full overflow-hidden bg-slate-900">
       {/* Backdrop overlay — mobile only */}
       {isSidebarOpen && (
         <div
@@ -489,10 +516,10 @@ export default function ChatbotHome() {
       <aside
         className={`fixed inset-y-0 left-0 z-50 flex h-full flex-col border-r border-blue-900/50 bg-blue-950 text-white transition-all duration-300 ease-in-out md:static
     ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0
-    ${isDesktopCollapsed ? "md:w-16" : "md:w-80"}`}
+    ${isDesktopCollapsed ? "md:w-16" : "md:w-80"} ca-chat-sidebar ${isSidebarOpen ? "is-open" : "is-closed"} ${isDesktopCollapsed ? "ca-sidebar-collapsed" : ""}`}
       >
         {/* Header Sidebar (Tetap di atas) */}
-        <div className="flex-none border-b border-blue-900/40 p-4">
+        <div className="ca-sidebar-header flex-none border-b border-blue-900/40 p-4">
           <div className="flex items-center justify-between mb-4">
             {!isDesktopCollapsed ? (
               <div>
@@ -537,14 +564,27 @@ export default function ChatbotHome() {
 
           {/* Search input */}
           <div
-            className={`relative ${isDesktopCollapsed ? "md:hidden" : "block"}`}
+            className={`ca-sidebar-search-wrap relative ${isDesktopCollapsed ? "md:hidden" : "block"}`}
           >
+            <svg
+              className="ca-sidebar-search-icon"
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+            >
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-4-4" />
+            </svg>
             <input
               type="text"
-              placeholder="Search..."
+              aria-label="Search campus FAQs"
+              placeholder="Search campus FAQs"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-lg border border-blue-800 bg-blue-900/40 py-1.5 pl-8 pr-3 text-sm text-white"
+              className="ca-sidebar-search w-full rounded-lg border border-blue-800 bg-blue-900/40 py-1.5 pl-8 pr-3 text-sm text-white"
+              data-testid="input-search-campus-faqs"
             />
             {/* ... icon search ... */}
           </div>
@@ -552,7 +592,7 @@ export default function ChatbotHome() {
 
         {/* FAQ list — Area yang bisa di-scroll */}
         <div
-          className={`flex-1 overflow-y-auto p-4 ${isDesktopCollapsed ? "md:hidden" : "block"}`}
+          className={`ca-sidebar-list flex-1 overflow-y-auto p-4 ${isDesktopCollapsed ? "md:hidden" : "block"}`}
         >
           {Object.keys(groupedFaqs).length === 0 ? (
             <p className="text-center text-sm text-blue-300/60">No results</p>
@@ -587,7 +627,7 @@ export default function ChatbotHome() {
 
         {/* Permanent suggest button at sidebar bottom */}
         {!isDesktopCollapsed && (
-          <div className="flex-none border-t border-blue-900/40 p-4">
+          <div className="ca-sidebar-bottom flex-none border-t border-blue-900/40 p-4">
             <button
               id="sidebar-suggest-btn"
               onClick={() => openSuggestionForm("", "manual")}
@@ -602,7 +642,7 @@ export default function ChatbotHome() {
       </aside>
 
       {/* Main chat container */}
-      <main className="flex h-full flex-1 items-center justify-center overflow-hidden p-4 lg:p-6">
+      <main className="ca-chat-main flex h-full flex-1 items-center justify-center overflow-hidden p-4 lg:p-6">
         <div className="chat-shell flex h-full w-full max-w-4xl flex-col overflow-hidden">
           {/* Header */}
           <header className="chat-header">
@@ -640,8 +680,8 @@ export default function ChatbotHome() {
               </div>
 
               <div>
-                <p className="brand-name">XMUM Campus Assistant</p>
-                <p className="brand-sub">NLP-Powered · Python Backend</p>
+                <p className="brand-name">Captain Kah Kee</p>
+                <p className="brand-sub">XMUM Campus Assistant</p>
               </div>
             </div>
 
@@ -653,6 +693,24 @@ export default function ChatbotHome() {
                     (apiStatus === "connected" ? "Online" : "Connecting…")}
                 </span>
               </span>
+
+              <button
+                onClick={() => setCurrentView("welcome")}
+                className="pill-btn ca-home-link"
+                type="button"
+                data-testid="button-return-home"
+              >
+                <span aria-hidden="true">←</span> Home
+              </button>
+              <button
+                onClick={startNewConversation}
+                className="pill-btn ca-new-question"
+                type="button"
+                aria-label="Start a new question"
+                data-testid="button-new-question"
+              >
+                <span aria-hidden="true">＋</span> <span className="ca-new-question-label">New</span>
+              </button>
 
               {isAdmin && (
                 <button
@@ -697,6 +755,27 @@ export default function ChatbotHome() {
 
           {/* Messages */}
           <div className="messages-pane" id="msgs">
+            {messages.length === 0 && !isLoading && (
+              <div className="ca-empty-chat">
+                <span className="ca-guide-seal" aria-hidden="true">✳</span>
+                <span className="ca-empty-eyebrow">A NOTE FROM YOUR GUIDE</span>
+                <h2>Hi, I’m Captain Kah Kee.</h2>
+                <p>Ask me about studying, getting around, or settling in. We can start with one small thing.</p>
+                <div className="ca-empty-prompts">
+                  {(suggestions.length > 0 ? suggestions.slice(0, 3) : FALLBACK_SUGGESTIONS.slice(0, 3)).map((prompt, index) => (
+                    <button
+                      key={`${prompt}-${index}`}
+                      onClick={() => void handleSend(prompt)}
+                      type="button"
+                      data-testid={`button-empty-prompt-${index + 1}`}
+                    >
+                      {prompt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {messages.map((msg) => (
               <div key={msg.id} className={`msg-row msg-row--${msg.role}`}>
                 <div
@@ -805,12 +884,14 @@ export default function ChatbotHome() {
               ref={inputRef}
               id="inp"
               type="text"
+                aria-label="Ask Captain Kah Kee a question"
               value={inputVal}
               onChange={(e) => setInputVal(e.target.value)}
               onKeyDown={handleKeyDown}
               disabled={isLoading}
-              placeholder="Ask me anything about XMUM campus…"
+                placeholder="Ask Captain Kah Kee a campus question…"
               autoComplete="off"
+                data-testid="input-chat-message"
             />
 
             <button
@@ -819,6 +900,7 @@ export default function ChatbotHome() {
               disabled={!inputVal.trim() || isLoading}
               aria-label="Send message"
               type="button"
+              data-testid="button-send-message"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -838,8 +920,8 @@ export default function ChatbotHome() {
 
       {/* ──────────────── Suggestion Modal ──────────────── */}
       {suggestionTarget && (
-        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/60 px-4">
-          <div className="w-full max-w-md bg-slate-900 border border-white/10 rounded-2xl p-6 space-y-5 shadow-2xl">
+        <div className="ca-modal-overlay fixed inset-0 z-[999] flex items-center justify-center bg-black/60 px-4">
+          <div className="ca-modal w-full max-w-md bg-slate-900 border border-white/10 rounded-2xl p-6 space-y-5 shadow-2xl">
             <div className="flex items-center justify-between">
               <h3 className="text-white font-bold text-lg">💡 Suggest a Question</h3>
               <button
@@ -910,7 +992,7 @@ export default function ChatbotHome() {
 
       {/* Toast notification */}
       {suggestionToast && (
-        <div className="fixed bottom-6 right-6 z-[1000] px-5 py-3 rounded-xl text-sm font-semibold bg-indigo-700 text-white shadow-xl">
+        <div className="ca-toast fixed bottom-6 right-6 z-[1000] px-5 py-3 rounded-xl text-sm font-semibold bg-indigo-700 text-white shadow-xl">
           {suggestionToast}
         </div>
       )}
