@@ -1,0 +1,133 @@
+IT Services Policies | LINC
+About
+A3 Library Details
+The People Great Hall
+Meet The Team
+Library Floor Directory
+Contact Us
+A3 Library Tour
+Virtual Tour
+XMUM Website
+News & Event
+Gifts-in-Kind
+Services
+Book Services
+Loan & Return
+Fines & Report Lost
+Purchase Request
+Document Delivery
+Learning Services
+Moodle
+Turnitin
+Computers
+Printing
+Scholarly Work
+E-Resources
+Library E-Resources
+OPAC
+E-Books
+E-Journal
+Technologies
+Campus Services
+Campus ID & E-Card
+Campus Email
+Online Storage
+E-Services
+IT Services
+Network & Connectivity
+Data Centre
+Microsoft 365
+Learning Technology
+Guidelines & Policy
+Library Policies
+IT Services Policies
+Spaces
+Makerspace
+About Makerspace
+How to Apply for Makerspace
+Makerspace Safety Guidelines
+Makerspace Rules and Regulations
+Makerspace Calendar
+Instruction Room
+Mini Cinema (with 3D)
+Room Types Available
+Ensuring a Positive Library Experience
+IT Services Policies
+IT Services Policies
+Internet, Email, Computer and Facilities Usage Policy and Guidelines
+Introduction
+This policy sets out the obligations and requirements that the users of Xiamen University Malaysia
+(“University”)
+including students, permanent or temporary staff, contractors, guests or visitors, and any other authorized users or organizations
+(“Users”)
+must adhere to in using the University’s information technology facilities for internet, network facilities and email purposes
+(“University’s IT Facilities”)
+. The University’s IT Facilities are provided to assist with day to day work or academic related purposes. It is important that they are used responsibly and are not abused, and that individuals understand the legal professional and ethical obligations that apply to them.
+Authorisation
+All University’s students, staff, contractors, guests or visitors are authorized by the University to access the University’s IT Facilities unless otherwise expressly prohibited by the University. Individuals and organization which do not fall within the aforesaid categories are required to apply to the University for authorization of use of the University’s IT Facilities. This policy also applies to Users connecting personally owned devices such as laptop computers, smartphones and tablets to the University IT Facilities, and/or storing any University data on such external storage or devices.
+Legislation
+All Users shall comply with the rules, regulations and the relevant legislation of Malaysia including but not limited to the Computer Crime Act 1997, Copyright Act 1987, Communications and Multimedia Act 1998 and Personal Data Protection Act 2010.
+Any information which the University holds or obtains pursuant to the usage of University’s IT Facilities is potentially disclosable if so required by laws, regulations and legal proceedings.
+By accessing the University’s IT Facilities, the Users hereby agree to release, discharge and indemnify the University of all liabilities, responsibilities, damages or expenses which the University may suffer or incur as a result of the failure on the part of the Users to comply with the relevant laws or the obligations/requirements set out herein.
+Responsibilities
+All Users are expected to act in a manner that will not cause damage to the University’s IT Facilities or disrupt its services. Any damage or disruption must be reported to Information Technology
+(“IT”)
+and the Direct Line Manager of the University immediately after the incident has occurred or came to awareness of the Users. Users are fully responsible for any activity which is initiated under their usernames.
+Use of the Internet
+By using the University’s IT Facilities, the Users hereby expressly acknowledge and agree that there is significant security, privacy and confidentiality risks inherent in accessing or transmitting information through the internet. Security risks include, without limitation, interception of transmissions, data threats, and the distribution of viruses and other programs that can lead to operational damage or corruption of internet service. The University does not hold the responsibility for the loss, damage or the recovery of saved or deleted files, associated with the illegal usage in the computers or devices.
+The following are examples only and do not comprise a comprehensive list of illegal uses:
+spamming and invasion of privacy – sending of unsolicited bulk and/or commercial messages over the Internet using the University’s IT Facilities or using the University’s IT Facilities for activities that invade another’s privacy;
+intellectual property right violations – engaging in any activity that infringes or misappropriates the intellectual property rights of others, including patents, copyrights, trademarks, service marks, trade secrets, or any other proprietary right of any third party;
+hacking activities in accessing illegal or without authorization computers, accounts, equipment or networks belonging to another party, or attempting to penetrate/circumvent security measures of another system. This includes any activity that may be used as a precursor to an attempted system penetration, including, but not limited to, port scans, stealth scans, or other information gathering activity;
+the transfer of technology, software, or other materials in violation of applicable laws and regulations and the distribution of internet viruses, worms, Trojan horses, pinging, flooding, mail-bombing, or denial of service attacks. This includes any activities that disrupt the use of or interfere with the ability of others to effectively use the node or any connected network, system, service, or equipment;
+export control violations;
+uttering threats, or intimidation;
+using the University’s IT Facilities in violation of applicable laws and regulations, including, but not limited to, advertising, transmitting, or otherwise making available Ponzi schemes, pyramid schemes, gambling, fraudulently charging credit cards, pirating software, or making fraudulent offers to sell or buy products, items, or services;
+distribution of pornographic materials to minors including child and adult pornography; and/or
+various types of violation related to religion, gender, ethnic and other human rights.
+Use of the Email
+Emails sent or received via the University’s IT Facilities form part of the official records of the University and are not private property of the Users. The University does not recognise any right of employees to impose restrictions on disclosure of such emails and may be disclosed if so required under the laws, regulations, legal and disciplinary proceedings deemed so necessary or appropriate by the University. The Users are responsible for all actions relating to their email accounts or computer usernames and shall ensure no other person has access to their accounts.
+When sending or receiving emails via the University’s IT Facilities, the Users shall:
+ensure they do not disrupt the University’s wider IT systems or cause an increase or significant resource demand in storage, capacity, speed or system performance e.g. by sending large attachment to a large number of internal recipients;
+ensure they do not harm the University’s reputation, bring it into disrepute, incur liability on the part of the University, or adversely impact on its image;
+not seek to gain access to restricted areas of the network, personal data and any “hacking activities” are strictly forbidden;
+not use email for the creation, retention or distribution of disruptive or offensive messages, images, materials or software that include offensive or abusive comments about ethnicity or nationality, gender, disabilities, age, sexual orientation, appearance, religious beliefs and practices, political beliefs or social background;
+not send email messages that might reasonably be considered by recipients to be bullying, harassing, abusive, malicious, discriminatory, defamatory, and libelous or contain illegal or offensive material, or foul language;
+not upload, download, use, retain, distribute, or disseminate any images, text, materials, or software which might reasonably be considered indecent, obscene, pornographic, or illegal;
+not engage in any activity that is likely to
+– corrupt or destroy other users’ data or disrupt the work of other users;
+– disrupt the effort or resources of the University or its staff in maintaining the University’s IT Facilities, or engage in activities that serve to deny service to other users;
+– fall outside the scope of normal work-related duties or educational purposes – for example, unauthorised selling/advertising of goods and services;
+– affect or have the potential to affect the performance of damage or overload the University’s IT Facilities, system, network, and/or external communications in any way;
+– be a breach of copyright or license provision with respect to both programs and data, including intellectual property rights;
+not send chain letters or joke emails from a University account.
+Recommended Practice for Staff Email
+The University has recommended practice guidelines for dealing with emails, when its staff are out of the office. When activating the “out of office” facility, messages should name an alternative member of staff for correspondents to contact, if necessary. This will ensure that any important messages are picked up and dealt with within required timescales.
+When highly important emails are anticipated during absence period, the employee (or his/her manager) should make arrangements for notification and access by another appropriate member of staff.
+Where sensitive and confidential information needs to be sent via email for legitimate reasons, please be aware that email is essentially a non-confidential means of communication. Emails can easily be forwarded or archived without the original sender’s knowledge. They may be read by persons other than those they are intended for.
+Staff must exercise due diligence when writing emails to avoid being rude or unnecessarily terse. Emails sent from the University may be interpreted by others as University’s statements. Staff are responsible for ensuring that their content and tone are appropriate. Emails often need to be as formal, professional and businesslike as other forms of written correspondence.
+Staff should delete all personal emails and attachments when they have been read and should also delete all unsolicited junk mail. In the process of archiving emails, staff should ensure inappropriate material is not archived.
+Staff must be cautioned when opening any attachments or emails from unknown senders. Staff must use their best endeavour to ensure that any file downloaded from the internet is done so from a reliable source with updated anti-virus software installed.
+Staff who receive improper email from individuals or organisations inside or outside the University, shall discuss the matter in the first instance with their direct line manager or supervisor; and IT department.
+Use of the Computers and Network Facilities in the University
+Computer and network facilities are provided to Users primarily for their educational and work-related use only. These facilities have tangible value. Consequently, attempts to circumvent accounting systems or to use the computer accounts of others will be treated as forms of attempted theft.
+General rules and regulation concerning the use of computers, services, networks and the University’s IT Facilities must be observed and aligned with all applicable laws in Malaysia. Breaches of the policy, for example, by downloading pornographic materials or sharing the unauthorized copying and/or alteration, may be treated as gross misconduct which could lead to suspension or expulsion from the University and could result in criminal proceedings.
+Users are expected to abide by these rules and policies prior to any activity that would appear to threaten the security or performance of University’s computers and networks. Failure to do so may result in disciplinary action. In addition to violating the rules and policies, certain computer misconduct is prohibited by the laws of Malaysia. Therefore, it is subject to criminal and civil penalties and legal proceedings. Such computer misconduct includes knowingly gaining unauthorized access to a computer system or database falsely obtaining electronic services or data without payment of required charges, etc. Similarly, serious legal penalties may result from the misuse ore illegitimate use of the University computers or network to violate international digital data protection laws.
+Users are expected to backup their work-related data regularly and ensure their data are kept safely.
+Monitoring
+The University’s IT Facilities, including computers, email, and voicemail are provided for legitimate use. If there are occasions where the University deems necessary to examine data beyond that of the normal business activity of the University, the University reserves the right to, at any time and without prior notice, examine any systems and inspect and review all data recorded in those systems. This will be undertaken by authorised staff only.
+Any information stored on a computer, whether the information is contained on a hard drive, USB external storage or in any other manner may be subject to scrutiny by the University. This examination helps to ensure compliance with internal policies and the law. It supports the performance of internal investigations and assists in the management of information systems.
+Penalties for Improper Use
+Withdrawal of facilities – Users in breach of these regulations may have access to the University’s IT Facilities being restricted or withdrawn.
+Disciplinary action – Breach of these regulations may be dealt with under the University’s disciplinary procedures. It may lead to suspension, expulsion or termination of employment from the University.
+Legal action – Breach of any law will be reported to the police by the University.
+Guidelines & Policy
+Library Policies
+IT Services Policies
+Library Contact Information
+Xiamen University Malaysia Library
+A3 Building
+Jalan Sunsuria,Bandar Sunsuria,
+43900 Sepang, Selangor
+Phone : 03-8800 6801
+Email : librarian@xmu.edu.my

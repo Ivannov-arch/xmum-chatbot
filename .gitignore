@@ -1,47 +1,59 @@
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-.Python
-*.egg-info/
-dist/
-build/
-*.egg
+# See https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
-# Virtual environment
-.venv/
-venv/
-env/
-ENV/
+# compiled output
+dist
+tmp
+out-tsc
+*.tsbuildinfo
+.expo
+.expo-shared
+.next
+.turbo
+.svelte-kit
+.nuxt
+.output
+.vercel
 
-# Environment variables — NEVER commit secrets
-.env
+# dependencies
+node_modules
 
-# IDE / Editor
-.vscode/
-.idea/
-*.swp
-*.swo
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
 
-# OS files
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+
+# System Files
 .DS_Store
 Thumbs.db
 
-# Test / Coverage artifacts
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md
+
+# Replit
+.cache/
+.local/
+.pythonlibs/
+__pycache__/
 .pytest_cache/
-.coverage
-htmlcov/
-coverage.xml
-
-# Logs
-*.log
-
-# Node (if frontend is added)
-node_modules/
-.next/
-
-# NLTK data (downloaded at runtime by chatbot/entity_recognizer.py)
-nltk_data/
-
-report/
+artifacts/api-server/python/nltk_data/
