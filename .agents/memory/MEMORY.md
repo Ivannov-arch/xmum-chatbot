@@ -1,2 +1,3 @@
 - [Migration boundaries](migration-boundaries.md) — preserve Supabase and the original Python chatbot; no database replacement or redesign.
 - [Site language and hosting](site-language-and-hosting.md) — the main website is English and is deployed on Render and Vercel.
+- [Live Supabase project](live-supabase-data.md) — the Supabase project is the live one with real student data; CMS delete and clear actions hit production.
