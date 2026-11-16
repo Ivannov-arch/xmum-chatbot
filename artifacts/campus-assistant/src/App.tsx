@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Router, Route, Switch, useLocation } from "wouter";
 import Home from "./app/page";
-import AdminLayout from "./app/admin/layout";
+import AdminLayout from "./components/cms/cms-layout";
 import AdminHome from "./app/admin/page";
 import AdminLogin from "./app/admin/login/page";
 import Knowledge from "./app/admin/knowledge/page";

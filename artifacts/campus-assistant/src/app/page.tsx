@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
+import { BookOpen, ChevronDown, ChevronRight, CircleHelp, Menu, MessageSquarePlus, Search, Wrench, X } from "lucide-react";
 import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 import { getKnowledgeItems } from "@/services/knowledgeService";
 import { submitSuggestion } from "@/services/suggestionService";
@@ -51,8 +52,6 @@ interface SuggestionsResponse {
   suggestions?: string[];
 }
 
-type GroupedFaqs = Record<string, FAQItem[]>;
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Suggested topics shown as chips
 // ─────────────────────────────────────────────────────────────────────────────
@@ -87,6 +86,9 @@ export default function ChatbotHome() {
   // FAQ sidebar
   const [faqs, setFaqs] = useState<FAQItem[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [faqLoading, setFaqLoading] = useState(true);
+  const [faqError, setFaqError] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
   // Sidebar states
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
@@ -124,6 +126,8 @@ export default function ChatbotHome() {
 
   useEffect(() => {
     async function loadFAQs() {
+      setFaqLoading(true);
+      setFaqError("");
       try {
         const data = await getKnowledgeItems();
 
@@ -152,10 +156,14 @@ export default function ChatbotHome() {
           setFaqs(normalized);
         } else {
           setFaqs([]);
+          setFaqError("The campus guide returned an unexpected response.");
         }
       } catch (error) {
         console.error("Error fetching FAQs for sidebar:", error);
         setFaqs([]);
+        setFaqError(error instanceof Error ? error.message : "Campus answers could not be loaded.");
+      } finally {
+        setFaqLoading(false);
       }
     }
 
@@ -269,7 +277,7 @@ export default function ChatbotHome() {
         {
           id: "greeting",
           role: "bot",
-          text: "Hi there! 👋 I'm <strong>Captain Kah Kee</strong>.<br/>Ask me anything — library, hostel, WiFi, scholarships, food, transport, and more!",
+          text: "Welcome. I’m <strong>Captain Kah Kee</strong>.<br/>Ask about the library, accommodation, WiFi, scholarships, food, transport, and more.",
         },
       ]);
     }, 250);
@@ -430,23 +438,16 @@ export default function ChatbotHome() {
 
   const filteredFaqs = faqs.filter((item) => {
     const query = searchQuery.toLowerCase();
-
-    return (
+    return (selectedCategory === "all" || (item.module || "general") === selectedCategory) && (
       item.question.toLowerCase().includes(query) ||
       (item.module?.toLowerCase().includes(query) ?? false)
     );
   });
-
-  const groupedFaqs = filteredFaqs.reduce<GroupedFaqs>((acc, item) => {
-    const moduleName = item.module || "General";
-
-    if (!acc[moduleName]) {
-      acc[moduleName] = [];
-    }
-
-    acc[moduleName].push(item);
-    return acc;
-  }, {});
+  const faqCategories = Array.from(new Set(faqs.map((item) => item.module || "general"))).sort((a, b) => {
+    if (a === "general") return -1;
+    if (b === "general") return 1;
+    return a.localeCompare(b);
+  });
 
   const statusDotMap: Record<ApiStatus, string> = {
     connecting: "bg-amber-400 animate-pulse",
@@ -472,6 +473,22 @@ export default function ChatbotHome() {
     setSuggestionAnswer("");
   };
 
+  const retryFaqLoad = async () => {
+    setFaqLoading(true);
+    setFaqError("");
+    try {
+      const data = await getKnowledgeItems();
+      if (!Array.isArray(data)) throw new Error("The campus guide returned an unexpected response.");
+      setFaqs(data
+        .filter((item) => item && typeof item.id === "string" && typeof item.question === "string")
+        .map((item) => ({ id: item.id, question: item.question, module: item.module || null })));
+    } catch (error) {
+      setFaqError(error instanceof Error ? error.message : "Campus answers could not be loaded.");
+    } finally {
+      setFaqLoading(false);
+    }
+  };
+
   const handleSubmitSuggestion = async () => {
     if (!suggestionQuestion.trim()) return;
     setSuggestionSubmitting(true);
@@ -482,7 +499,7 @@ export default function ChatbotHome() {
         user_message: suggestionTarget?.query,
         session_id: sessionIdRef.current,
       });
-      setSuggestionToast("Thank you! Your suggestion has been submitted. ✅");
+      setSuggestionToast("Thank you. Your suggestion has been submitted.");
       closeSuggestionForm();
       setTimeout(() => setSuggestionToast(null), 4000);
     } catch {
@@ -511,135 +528,55 @@ export default function ChatbotHome() {
         />
       )}
 
-      {/* Sidebar */}
-      {/* Sidebar */}
-      <aside
-        className={`fixed inset-y-0 left-0 z-50 flex h-full flex-col border-r border-blue-900/50 bg-blue-950 text-white transition-all duration-300 ease-in-out md:static
-    ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0
-    ${isDesktopCollapsed ? "md:w-16" : "md:w-80"} ca-chat-sidebar ${isSidebarOpen ? "is-open" : "is-closed"} ${isDesktopCollapsed ? "ca-sidebar-collapsed" : ""}`}
-      >
-        {/* Header Sidebar (Tetap di atas) */}
-        <div className="ca-sidebar-header flex-none border-b border-blue-900/40 p-4">
-          <div className="flex items-center justify-between mb-4">
-            {!isDesktopCollapsed ? (
-              <div>
-                <h2 className="flex items-center gap-2 text-base font-bold text-blue-200">
-                  <span>📚</span> Campus FAQ
-                </h2>
-              </div>
-            ) : (
-              <button
-                onClick={() => setIsDesktopCollapsed(false)}
-                className="mx-auto hidden text-xl md:flex hover:bg-blue-900/50 p-2 rounded-lg transition-colors cursor-pointer"
-                title="Expand FAQ Sidebar"
-                type="button"
-              >
-                📚
-              </button>
-            )}
-
-            <div className="flex items-center gap-1">
-              {/* Close/Collapse Button for Desktop */}
-              {!isDesktopCollapsed && (
-                <button
-                  onClick={() => setIsDesktopCollapsed(true)}
-                  className="hidden md:flex rounded-lg p-1.5 text-blue-300 hover:text-white hover:bg-blue-900/50 transition-colors text-sm items-center justify-center"
-                  type="button"
-                  title="Collapse FAQ Sidebar"
-                >
-                  ✕
-                </button>
-              )}
-
-              {/* Mobile close — Hanya muncul di mobile */}
-              <button
-                onClick={() => setIsSidebarOpen(false)}
-                className="rounded-lg p-2 text-xl text-blue-300 hover:text-white md:hidden"
-                type="button"
-              >
-                ✕
-              </button>
+      <aside className={`ca-chat-sidebar ${isSidebarOpen ? "is-open" : ""} ${isDesktopCollapsed ? "ca-sidebar-collapsed" : ""}`}>
+        <div className="ca-sidebar-header">
+          <div className="ca-sidebar-topline">
+            <div className="ca-sidebar-title">
+              <span className="ca-sidebar-title-icon"><BookOpen size={19} /></span>
+              <span><small>STUDENT QUICK FIND</small><b>Campus answers</b></span>
+              <span className="ca-faq-total">{faqLoading ? "…" : faqError ? "—" : faqs.length}</span>
+            </div>
+            <div className="ca-sidebar-controls">
+              <button type="button" className="ca-sidebar-control ca-desktop-collapse" onClick={() => setIsDesktopCollapsed(true)} aria-label="Collapse FAQ sidebar" title="Collapse sidebar"><ChevronDown size={17} /></button>
+              <button type="button" className="ca-sidebar-control ca-mobile-close" onClick={() => setIsSidebarOpen(false)} aria-label="Close FAQ menu"><X size={18} /></button>
             </div>
           </div>
-
-          {/* Search input */}
-          <div
-            className={`ca-sidebar-search-wrap relative ${isDesktopCollapsed ? "md:hidden" : "block"}`}
-          >
-            <svg
-              className="ca-sidebar-search-icon"
-              aria-hidden="true"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-            >
-              <circle cx="11" cy="11" r="7" />
-              <path d="m20 20-4-4" />
-            </svg>
-            <input
-              type="text"
-              aria-label="Search campus FAQs"
-              placeholder="Search campus FAQs"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="ca-sidebar-search w-full rounded-lg border border-blue-800 bg-blue-900/40 py-1.5 pl-8 pr-3 text-sm text-white"
-              data-testid="input-search-campus-faqs"
-            />
-            {/* ... icon search ... */}
+          <div className="ca-sidebar-search-wrap">
+            <Search size={18} aria-hidden="true" />
+            <input type="search" aria-label="Search campus FAQs" placeholder="Search trusted answers" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} data-testid="input-search-campus-faqs" />
+            {searchQuery && <button type="button" onClick={() => setSearchQuery("")} aria-label="Clear FAQ search" data-testid="button-clear-faq-search"><X size={15} /></button>}
+            <kbd>/</kbd>
+          </div>
+          <div className="ca-sidebar-result-line">
+            <span>{faqLoading ? "Finding answers…" : faqError ? "Source unavailable" : <><b>{filteredFaqs.length}</b> {filteredFaqs.length === 1 ? "answer" : "answers"}{searchQuery || selectedCategory !== "all" ? " found" : " to explore"}</>}</span>
+            {(searchQuery || selectedCategory !== "all") && <button type="button" onClick={() => { setSearchQuery(""); setSelectedCategory("all"); }}>Reset</button>}
           </div>
         </div>
 
-        {/* FAQ list — Area yang bisa di-scroll */}
-        <div
-          className={`ca-sidebar-list flex-1 overflow-y-auto p-4 ${isDesktopCollapsed ? "md:hidden" : "block"}`}
-        >
-          {Object.keys(groupedFaqs).length === 0 ? (
-            <p className="text-center text-sm text-blue-300/60">No results</p>
-          ) : (
-            Object.entries(groupedFaqs)
-              .sort(([a], [b]) => {
-                if (a.toLowerCase() === "general") return -1;
-                if (b.toLowerCase() === "general") return 1;
-                return a.localeCompare(b);
-              })
-              .map(([moduleName, items]) => (
-              <div key={moduleName} className="mb-6">
-                <h3 className="mb-2 text-xs font-bold uppercase text-blue-300">
-                  {moduleName}
-                </h3>
-                {items.map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => {
-                      void handleSend(item.question);
-                      setIsSidebarOpen(false); // Otomatis tutup saat klik
-                    }}
-                    className="block w-full rounded-lg px-3 py-2 text-left text-sm hover:bg-blue-900/50"
-                  >
-                    &bull; {item.question}
-                  </button>
-                ))}
-              </div>
-            ))
-          )}
+        <div className="ca-sidebar-content">
+          {!isDesktopCollapsed && <>
+            {!searchQuery && <nav className="ca-faq-categories" aria-label="FAQ categories">
+              <button type="button" className={selectedCategory === "all" ? "is-active" : ""} onClick={() => setSelectedCategory("all")}><span>All topics</span><b>{faqs.length}</b></button>
+              {faqCategories.map((category) => {
+                const label = category.replace(/[_-]+/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+                const count = faqs.filter((item) => (item.module || "general") === category).length;
+                return <button type="button" key={category} className={selectedCategory === category ? "is-active" : ""} onClick={() => setSelectedCategory(category)}><span>{label}</span><b>{count}</b></button>;
+              })}
+            </nav>}
+            <div className="ca-sidebar-list" aria-live="polite">
+              {faqLoading ? <div className="ca-faq-state"><span className="ca-faq-skeleton" /><span className="ca-faq-skeleton" /><span className="ca-faq-skeleton" /><p>Loading approved campus answers…</p></div> :
+                faqError ? <div className="ca-faq-state ca-faq-state--error"><CircleHelp size={23} /><b>Answers aren’t available</b><p>{faqError}</p><button type="button" onClick={() => void retryFaqLoad()}>Try again</button></div> :
+                filteredFaqs.length === 0 ? <div className="ca-faq-state"><CircleHelp size={23} /><b>{faqs.length ? "No answers found" : "No answers published yet"}</b><p>{faqs.length ? "Try a different phrase or topic." : "Approved campus guidance will show here."}</p>{faqs.length > 0 && <button type="button" onClick={() => { setSearchQuery(""); setSelectedCategory("all"); }}>Clear filters</button>}</div> :
+                <div className="ca-faq-results">{filteredFaqs.map((item) => <button key={item.id} type="button" onClick={() => { void handleSend(item.question); setIsSidebarOpen(false); }} disabled={isLoading} data-testid={`button-faq-${item.id}`}><span className="ca-faq-item-category">{(item.module || "general").replace(/[_-]+/g, " ")}</span><span className="ca-faq-question">{item.question}</span><ChevronRight size={16} /></button>)}</div>}
+            </div>
+          </>}
         </div>
-
-        {/* Permanent suggest button at sidebar bottom */}
-        {!isDesktopCollapsed && (
-          <div className="ca-sidebar-bottom flex-none border-t border-blue-900/40 p-4">
-            <button
-              id="sidebar-suggest-btn"
-              onClick={() => openSuggestionForm("", "manual")}
-              className="w-full flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-semibold text-blue-300 border border-blue-700/50 hover:bg-blue-900/40 hover:text-white transition-all"
-              type="button"
-            >
-              <span>💡</span>
-              Suggest a Question
-            </button>
-          </div>
-        )}
+        {!isDesktopCollapsed && <div className="ca-sidebar-bottom">
+          <div className="ca-sidebar-note"><span><img src="/tan-kah-kee-portrait.webp" alt="" /></span><p><b>Checked by campus staff</b><small>Answers are maintained by XMUM.</small></p></div>
+          <button id="sidebar-suggest-btn" onClick={() => openSuggestionForm("", "manual")} type="button"><MessageSquarePlus size={17} /> Suggest a question</button>
+        </div>}
       </aside>
+      {isDesktopCollapsed && <button type="button" className="ca-sidebar-expand" onClick={() => setIsDesktopCollapsed(false)} aria-label="Expand FAQ sidebar" title="Open campus answers"><Menu size={20} /></button>}
 
       {/* Main chat container */}
       <main className="ca-chat-main flex h-full flex-1 items-center justify-center overflow-hidden p-4 lg:p-6">
@@ -652,6 +589,7 @@ export default function ChatbotHome() {
                 onClick={() => {
                   if (window.innerWidth < 768) {
                     setIsSidebarOpen(true);
+                    setIsDesktopCollapsed(false);
                   } else {
                     setIsDesktopCollapsed(false);
                   }
@@ -676,7 +614,7 @@ export default function ChatbotHome() {
               </button>
 
               <div className="brand-avatar overflow-hidden">
-                <img src="/mascot.jpg" alt="XMUM Mascot" className="w-full h-full object-cover" />
+                <img src="/tan-kah-kee-portrait.webp" alt="Illustrated portrait of Tan Kah Kee" className="w-full h-full object-cover" />
               </div>
 
               <div>
@@ -688,7 +626,7 @@ export default function ChatbotHome() {
             <div className="chat-header-actions">
               <span className="status-chip">
                 <span className={`status-dot ${statusDot}`} />
-                <span className="hidden sm:inline">
+                    <span className="hidden sm:inline">
                   {apiStatusMsg ||
                     (apiStatus === "connected" ? "Online" : "Connecting…")}
                 </span>
@@ -719,7 +657,7 @@ export default function ChatbotHome() {
                   title="Admin-only debug toggle"
                   type="button"
                 >
-                  🛠{" "}
+                  <Wrench size={14} aria-hidden="true" />
                   <span className="hidden sm:inline">
                     Debug {showDebug ? "On" : "Off"}
                   </span>
@@ -785,7 +723,7 @@ export default function ChatbotHome() {
                   {msg.role === "user" ? (
                     "U"
                   ) : (
-                    <img src="/mascot.jpg" alt="Mascot" className="w-full h-full object-cover rounded-full" />
+                    <img src="/tan-kah-kee-portrait.webp" alt="" className="w-full h-full object-cover rounded-full" />
                   )}
                 </div>
 
@@ -802,7 +740,7 @@ export default function ChatbotHome() {
                     msg.role === "bot" &&
                     !msg.error && (
                       <div className="debug-panel">
-                        <p className="debug-title">🛠 Debug Info</p>
+                        <p className="debug-title"><Wrench size={13} aria-hidden="true" /> Debug Info</p>
 
                         {msg.debugData.matched_question && (
                           <div className="debug-row">
@@ -853,7 +791,7 @@ export default function ChatbotHome() {
                         className="flex items-center gap-1.5 text-xs text-indigo-300 hover:text-indigo-100 transition-colors"
                         type="button"
                       >
-                        <span>💡</span>
+                        <MessageSquarePlus size={14} aria-hidden="true" />
                         <span>Couldn&apos;t find an answer? Suggest this question</span>
                       </button>
                     </div>
@@ -865,7 +803,7 @@ export default function ChatbotHome() {
             {isLoading && (
               <div className="msg-row msg-row--bot">
                 <div className="msg-avatar overflow-hidden">
-                  <img src="/mascot.jpg" alt="Mascot" className="w-full h-full object-cover rounded-full" />
+                  <img src="/tan-kah-kee-portrait.webp" alt="" className="w-full h-full object-cover rounded-full" />
                 </div>
                 <div className="bubble bubble--bot bubble--typing">
                   <span />
@@ -923,7 +861,7 @@ export default function ChatbotHome() {
         <div className="ca-modal-overlay fixed inset-0 z-[999] flex items-center justify-center bg-black/60 px-4">
           <div className="ca-modal w-full max-w-md bg-slate-900 border border-white/10 rounded-2xl p-6 space-y-5 shadow-2xl">
             <div className="flex items-center justify-between">
-              <h3 className="text-white font-bold text-lg">💡 Suggest a Question</h3>
+              <h3 className="text-white font-bold text-lg flex items-center gap-2"><MessageSquarePlus size={19} /> Suggest a Question</h3>
               <button
                 onClick={closeSuggestionForm}
                 className="text-slate-400 hover:text-white text-xl leading-none"

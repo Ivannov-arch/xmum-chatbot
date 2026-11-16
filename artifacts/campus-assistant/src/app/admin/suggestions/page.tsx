@@ -1,410 +1,163 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
-import {
-  getSuggestions,
-  updateSuggestionStatus,
-  deleteSuggestion,
-  Suggestion,
-} from "@/services/suggestionService";
+import { useCallback, useEffect, useState } from "react";
+import type { FormEvent } from "react";
+import { AlertTriangle, Check, Lightbulb, RefreshCw, Trash2, X } from "lucide-react";
+import { isSupabaseConfigured, supabase } from "@/lib/supabaseClient";
+import { getSuggestions, updateSuggestionStatus, deleteSuggestion } from "@/services/suggestionService";
+import type { Suggestion } from "@/services/suggestionService";
 import { createKnowledgeItem } from "@/services/knowledgeService";
+import { ErrorState, Field, Modal, MODULE_OPTIONS, PageHeader, SkeletonRows, StateBlock, Toast, errorMessage, formatDateTime, type ToastState } from "@/components/cms/cms-ui";
+import "../cms.css";
 
-type FilterStatus = "all" | "pending" | "approved" | "rejected";
-
-const STATUS_BADGE: Record<string, string> = {
-  pending: "bg-amber-500/15 text-amber-300 border-amber-500/30",
-  approved: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
-  rejected: "bg-rose-500/15 text-rose-300 border-rose-500/30",
-};
+type FilterStatus = "pending" | "all" | "approved" | "rejected";
+const filters: FilterStatus[] = ["pending", "all", "approved", "rejected"];
+const labelForStatus = (status: string) => status.charAt(0).toUpperCase() + status.slice(1);
 
 export default function SuggestionsPage() {
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [filter, setFilter] = useState<FilterStatus>("pending");
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [actioningId, setActioningId] = useState<string | null>(null);
-  const [toast, setToast] = useState<{ msg: string; type: "ok" | "err" } | null>(null);
+  const [toast, setToast] = useState<ToastState>(null);
   const [adminEmail, setAdminEmail] = useState("");
-
-  // Approve Modal States
-  const [isApproveOpen, setIsApproveOpen] = useState(false);
-  const [approvingItem, setApprovingItem] = useState<Suggestion | null>(null);
+  const [approveItem, setApproveItem] = useState<Suggestion | null>(null);
+  const [deleteItem, setDeleteItem] = useState<Suggestion | null>(null);
   const [formModule, setFormModule] = useState("campus_life");
   const [formSubIntent, setFormSubIntent] = useState("general");
-  const [formQuestion, setFormQuestion] = useState("");
-  const [formAnswer, setFormAnswer] = useState("");
-  const [formKeywords, setFormKeywords] = useState("");
+  const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState("");
+  const [keywords, setKeywords] = useState("");
+
+  const notify = (message: string, type: "success" | "error" = "success") => {
+    setToast({ message, type });
+    window.setTimeout(() => setToast(null), 3500);
+  };
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setAdminEmail(data?.session?.user?.email ?? "admin");
-    });
+    if (!isSupabaseConfigured) return;
+    supabase.auth.getSession().then(({ data }) => setAdminEmail(data.session?.user?.email ?? "")).catch(() => setAdminEmail(""));
   }, []);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
+    setLoadError("");
+    if (!isSupabaseConfigured) {
+      setSuggestions([]);
+      setLoadError("Supabase is not configured. Student suggestions cannot be loaded.");
+      setLoading(false);
+      return;
+    }
     try {
-      const data = await getSuggestions(
-        filter === "all" ? undefined : filter
-      );
-      setSuggestions(data);
-    } catch {
-      showToast("Failed to load suggestions.", "err");
+      const result = await getSuggestions(filter === "all" ? undefined : filter);
+      setSuggestions(result);
+    } catch (err) {
+      setSuggestions([]);
+      setLoadError(errorMessage(err, "Unable to load suggestions."));
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    load();
   }, [filter]);
+  useEffect(() => { void load(); }, [load]);
 
-  const showToast = (msg: string, type: "ok" | "err") => {
-    setToast({ msg, type });
-    setTimeout(() => setToast(null), 3000);
-  };
-
-  const openApproveModal = (item: Suggestion) => {
-    setApprovingItem(item);
-    setFormQuestion(item.question);
-    setFormAnswer(item.suggested_answer || "");
+  const openApproval = (item: Suggestion) => {
+    setApproveItem(item);
+    setQuestion(item.question);
+    setAnswer(item.suggested_answer || "");
     setFormModule("campus_life");
     setFormSubIntent("general");
-    setFormKeywords("");
-    setIsApproveOpen(true);
+    setKeywords("");
   };
 
-  const handleApproveSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!approvingItem) return;
-    if (!formQuestion.trim() || !formAnswer.trim()) {
-      showToast("Question and Answer are required.", "err");
-      return;
-    }
-
-    setActioningId(approvingItem.id);
+  const approve = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!approveItem || !question.trim() || !answer.trim()) return;
+    const target = approveItem;
+    setActioningId(target.id);
     try {
-      const keywordsArray = formKeywords
-        .split(",")
-        .map((k) => k.trim())
-        .filter((k) => k.length > 0);
-
-      // 1. Insert into knowledge_items
-      await createKnowledgeItem({
-        module: formModule,
-        question: formQuestion.trim(),
-        answer: formAnswer.trim(),
-        keywordsArray,
-      });
-
-      // 2. Update status to 'approved'
-      await updateSuggestionStatus(approvingItem.id, "approved", adminEmail);
-
-      showToast("Suggestion approved and added to Knowledge Base.", "ok");
-      
-      setSuggestions((prev) =>
-        filter === "all"
-          ? prev.map((s) =>
-              s.id === approvingItem.id ? { ...s, status: "approved", reviewed_by: adminEmail } : s
-            )
-          : prev.filter((s) => s.id !== approvingItem.id)
-      );
-
-      setIsApproveOpen(false);
-      setApprovingItem(null);
+      const keywordsArray = keywords.split(",").map((word) => word.trim()).filter(Boolean);
+      await createKnowledgeItem({ module: formModule, question: question.trim(), answer: answer.trim(), keywordsArray });
+      await updateSuggestionStatus(target.id, "approved", adminEmail);
+      setSuggestions((current) => filter === "all" ? current.map((row) => row.id === target.id ? { ...row, status: "approved", reviewed_by: adminEmail } : row) : current.filter((row) => row.id !== target.id));
+      setApproveItem(null);
+      notify("Suggestion added to the knowledge base and approved.");
     } catch (err) {
-      console.error(err);
-      showToast("Approval failed. Please try again.", "err");
-    } finally {
-      setActioningId(null);
-    }
+      notify(errorMessage(err, "Approval failed. Please retry."), "error");
+    } finally { setActioningId(null); }
   };
 
-  const handleReject = async (id: string) => {
-    setActioningId(id);
+  const reject = async (item: Suggestion) => {
+    setActioningId(item.id);
     try {
-      await updateSuggestionStatus(id, "rejected", adminEmail);
-      showToast("Suggestion rejected.", "ok");
-      setSuggestions((prev) =>
-        filter === "all"
-          ? prev.map((s) =>
-              s.id === id ? { ...s, status: "rejected", reviewed_by: adminEmail } : s
-            )
-          : prev.filter((s) => s.id !== id)
-      );
-    } catch {
-      showToast("Rejection failed. Please try again.", "err");
-    } finally {
-      setActioningId(null);
-    }
+      await updateSuggestionStatus(item.id, "rejected", adminEmail);
+      setSuggestions((current) => filter === "all" ? current.map((row) => row.id === item.id ? { ...row, status: "rejected", reviewed_by: adminEmail } : row) : current.filter((row) => row.id !== item.id));
+      notify("Suggestion rejected.");
+    } catch (err) { notify(errorMessage(err, "Unable to reject the suggestion."), "error"); }
+    finally { setActioningId(null); }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this suggestion permanently?")) return;
-    setActioningId(id);
+  const remove = async () => {
+    if (!deleteItem) return;
+    setActioningId(deleteItem.id);
     try {
-      await deleteSuggestion(id);
-      showToast("Suggestion permanently deleted.", "ok");
-      setSuggestions((prev) => prev.filter((s) => s.id !== id));
-    } catch (err) {
-      console.error(err);
-      showToast("Deletion failed. Please try again.", "err");
-    } finally {
-      setActioningId(null);
-    }
+      await deleteSuggestion(deleteItem.id);
+      setSuggestions((current) => current.filter((row) => row.id !== deleteItem.id));
+      setDeleteItem(null);
+      notify("Suggestion deleted permanently.");
+    } catch (err) { notify(errorMessage(err, "Unable to delete the suggestion."), "error"); }
+    finally { setActioningId(null); }
   };
 
+  const openApprove = Boolean(approveItem);
   return (
-    <div className="w-full h-full p-8 lg:p-12">
-      <div className="mx-auto max-w-5xl space-y-10">
-        {/* Header */}
-        <div className="space-y-1">
-          <h2 className="text-3xl font-bold text-white">Suggested Questions</h2>
-          <p className="text-slate-400">
-            Review questions submitted by users. Approve to add to the knowledge
-            base, or reject if irrelevant.
-          </p>
+    <main className="cms-page">
+      <PageHeader eyebrow="Student feedback" title="Suggested questions" description="Review what students are asking. Approve useful questions by writing a verified answer, or reject those that do not belong in the guide." actions={<button type="button" className="cms-btn cms-btn--ghost" onClick={() => void load()} disabled={loading}><RefreshCw size={15} /> Refresh</button>} />
+      <div className="cms-resultbar" style={{ border: "1px solid var(--c-line)", borderRadius: "8px 8px 0 0" }}>
+        <div className="cms-segment" role="tablist" aria-label="Filter suggestions">
+          {filters.map((status) => <button type="button" role="tab" aria-selected={filter === status} key={status} className={filter === status ? "is-active" : ""} onClick={() => setFilter(status)} data-testid={`filter-tab-${status}`}>{labelForStatus(status)}</button>)}
         </div>
-
-        {/* Filter tabs */}
-        <div className="flex gap-2 flex-wrap">
-          {(["pending", "all", "approved", "rejected"] as FilterStatus[]).map(
-            (s) => (
-              <button
-                key={s}
-                id={`filter-tab-${s}`}
-                onClick={() => setFilter(s)}
-                className={`px-5 py-2 rounded-full text-sm font-semibold border transition-all ${
-                  filter === s
-                    ? "bg-indigo-600 border-indigo-500 text-white"
-                    : "bg-slate-900/40 border-white/10 text-slate-400 hover:text-white hover:border-white/20"
-                }`}
-              >
-                {s.charAt(0).toUpperCase() + s.slice(1)}
-              </button>
-            )
-          )}
-        </div>
-
-        {/* Table */}
-        {loading ? (
-          <p className="text-slate-500 text-sm">Loading...</p>
-        ) : suggestions.length === 0 ? (
-          <div className="rounded-2xl border border-white/5 bg-slate-900/30 p-16 text-center">
-            <p className="text-slate-500 text-sm">No {filter} suggestions found.</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {suggestions.map((s) => (
-              <div
-                key={s.id}
-                className="rounded-2xl border border-white/5 bg-slate-900/40 p-6 space-y-4"
-              >
-                {/* Question */}
-                <div className="flex items-start justify-between gap-4 flex-wrap">
-                  <div className="space-y-1 flex-1 min-w-0">
-                    <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500">
-                      Suggested Question
-                    </p>
-                    <p className="text-white font-semibold text-base leading-snug">
-                      {s.question}
-                    </p>
-                  </div>
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-bold border uppercase tracking-wide flex-shrink-0 ${STATUS_BADGE[s.status]}`}
-                  >
-                    {s.status}
-                  </span>
-                </div>
-
-                {/* User's suggested answer (highlighted) */}
-                {s.suggested_answer && (
-                  <div className="rounded-xl bg-indigo-500/10 border border-indigo-500/20 px-4 py-3">
-                    <p className="text-[11px] font-bold uppercase tracking-widest text-indigo-400 mb-1">
-                      User&apos;s Suggested Answer
-                    </p>
-                    <p className="text-slate-200 text-sm leading-relaxed">
-                      {s.suggested_answer}
-                    </p>
-                  </div>
-                )}
-
-                {/* Original context */}
-                {s.user_message && (
-                  <div className="rounded-xl bg-slate-800/50 border border-white/5 px-4 py-3">
-                    <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-1">
-                      Original Chat Message
-                    </p>
-                    <p className="text-slate-400 text-sm italic">
-                      &ldquo;{s.user_message}&rdquo;
-                    </p>
-                  </div>
-                )}
-
-                {/* Footer */}
-                <div className="flex items-center justify-between flex-wrap gap-3 pt-1">
-                  <p className="text-xs text-slate-500">
-                    {new Date(s.created_at).toLocaleString()}
-                    {s.reviewed_by && ` · Reviewed by ${s.reviewed_by}`}
-                  </p>
-
-                  <div className="flex gap-3">
-                    {s.status === "pending" ? (
-                      <>
-                        <button
-                          id={`reject-btn-${s.id}`}
-                          disabled={actioningId === s.id}
-                          onClick={() => handleReject(s.id)}
-                          className="px-4 py-2 rounded-lg text-sm font-semibold border border-rose-500/30 text-rose-400 hover:bg-rose-500/10 transition-all disabled:opacity-40"
-                        >
-                          Reject
-                        </button>
-                        <button
-                          id={`approve-btn-${s.id}`}
-                          disabled={actioningId === s.id}
-                          onClick={() => openApproveModal(s)}
-                          className="px-4 py-2 rounded-lg text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-all disabled:opacity-40"
-                        >
-                          Approve
-                        </button>
-                      </>
-                    ) : (
-                      <button
-                        id={`delete-btn-${s.id}`}
-                        disabled={actioningId === s.id}
-                        onClick={() => handleDelete(s.id)}
-                        className="px-4 py-2 rounded-lg text-sm font-semibold border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-all disabled:opacity-40"
-                      >
-                        Delete Record
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        <span>{loading ? "Loading submissions…" : loadError ? "Submissions unavailable" : <><b>{suggestions.length}</b> {filter === "all" ? "submissions" : `${filter} submissions`}</>}</span>
       </div>
+      <section className="cms-panel cms-panel--round" style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }} aria-live="polite">
+        {loading ? <SkeletonRows rows={4} /> : loadError ? <ErrorState title="Suggestions could not be loaded" message={loadError} onRetry={() => void load()} /> : suggestions.length === 0 ? (
+          <StateBlock icon={<Lightbulb size={21} />} title={filter === "pending" ? "No questions awaiting review" : `No ${filter === "all" ? "" : `${filter} `}suggestions`} message={filter === "pending" ? "New student-submitted questions will appear here for staff review." : "There are no records in this view."} />
+        ) : <div className="cms-sugg-list" style={{ padding: 14 }}>
+          {suggestions.map((item, index) => <article className="cms-sugg" key={item.id} style={{ animationDelay: `${Math.min(index * 40, 240)}ms` }} data-testid={`card-suggestion-${item.id}`}>
+            <div className="cms-sugg-head"><div><span className="cms-eyebrow" style={{ fontSize: 11 }}>Suggested question</span><h3 style={{ marginTop: 6 }}>{item.question}</h3></div><span className={`cms-badge cms-badge--${item.status === "approved" ? "green" : item.status === "rejected" ? "red" : "gold"}`}><i />{labelForStatus(item.status)}</span></div>
+            {(item.suggested_answer || item.user_message) && <div className="cms-sugg-body">
+              {item.suggested_answer && <div className="cms-sugg-block cms-sugg-block--answer"><small>Student-suggested answer · verify before publishing</small>{item.suggested_answer}</div>}
+              {item.user_message && <div className="cms-sugg-block cms-sugg-block--context"><small>Original chat message</small>“{item.user_message}”</div>}
+            </div>}
+            <footer className="cms-sugg-foot"><span>{formatDateTime(item.created_at)}{item.reviewed_by ? ` · Reviewed by ${item.reviewed_by}` : ""}</span><div>
+              {item.status === "pending" ? <>
+                <button type="button" className="cms-btn cms-btn--danger-ghost cms-btn--sm" disabled={actioningId === item.id} onClick={() => void reject(item)} data-testid={`reject-btn-${item.id}`}><X size={15} /> Reject</button>
+                <button type="button" className="cms-btn cms-btn--success cms-btn--sm" disabled={actioningId === item.id} onClick={() => openApproval(item)} data-testid={`approve-btn-${item.id}`}><Check size={15} /> Approve</button>
+              </> : <button type="button" className="cms-btn cms-btn--danger-ghost cms-btn--sm" disabled={actioningId === item.id} onClick={() => setDeleteItem(item)} data-testid={`delete-btn-${item.id}`}><Trash2 size={15} /> Delete record</button>}
+            </div></footer>
+          </article>)}
+        </div>}
+      </section>
 
-      {/* Approve Modal */}
-      {isApproveOpen && approvingItem && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]">
-          <div className="bg-slate-950 border border-white/10 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            {/* Modal Header */}
-            <div className="bg-indigo-950/40 text-indigo-300 border-b border-white/5 px-6 py-4 flex items-center gap-2">
-              <span>💡</span>
-              <h3 className="font-bold text-sm">Approve & Add to Knowledge Base</h3>
-            </div>
-
-            {/* Modal Form */}
-            <form onSubmit={handleApproveSubmit} className="p-6 space-y-4 text-slate-100">
-              <div className="space-y-1">
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider">
-                  Module
-                </label>
-                <select
-                  value={formModule}
-                  onChange={(e) => setFormModule(e.target.value)}
-                  className="w-full px-3 py-2.5 border border-white/10 rounded-xl text-sm text-slate-200 bg-slate-900/60 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                  style={{ colorScheme: "dark" }}
-                >
-                  <option value="campus_life">Campus Life</option>
-                  <option value="academic_navigation">Academic Navigation</option>
-                  <option value="admin_directory">Admin Directory</option>
-                  <option value="general">General</option>
-                </select>
-              </div>
-
-              <div className="space-y-1">
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider">
-                  Sub Intent
-                </label>
-                <input
-                  type="text"
-                  value={formSubIntent}
-                  onChange={(e) => setFormSubIntent(e.target.value)}
-                  placeholder="e.g. library, wifi, hostel"
-                  className="w-full px-3 py-2.5 border border-white/10 rounded-xl text-sm text-slate-200 bg-slate-900/60 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                  required
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider">
-                  Question
-                </label>
-                <input
-                  type="text"
-                  value={formQuestion}
-                  onChange={(e) => setFormQuestion(e.target.value)}
-                  className="w-full px-3 py-2.5 border border-white/10 rounded-xl text-sm text-slate-200 bg-slate-900/60 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                  required
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider">
-                  Answer
-                </label>
-                <textarea
-                  value={formAnswer}
-                  onChange={(e) => setFormAnswer(e.target.value)}
-                  rows={3}
-                  className="w-full px-3 py-2.5 border border-white/10 rounded-xl text-sm text-slate-200 bg-slate-900/60 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                  required
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider">
-                  Keywords (comma-separated)
-                </label>
-                <input
-                  type="text"
-                  value={formKeywords}
-                  onChange={(e) => setFormKeywords(e.target.value)}
-                  placeholder="e.g. gym, workout, fitness"
-                  className="w-full px-3 py-2.5 border border-white/10 rounded-xl text-sm text-slate-200 bg-slate-900/60 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                />
-              </div>
-
-              {/* Actions Panel */}
-              <div className="flex justify-end gap-3 pt-3 border-t border-white/5">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsApproveOpen(false);
-                    setApprovingItem(null);
-                  }}
-                  className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 text-sm font-semibold rounded-xl border border-white/5 transition"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={actioningId === approvingItem.id}
-                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-600/40 text-white text-sm font-semibold rounded-xl shadow transition"
-                >
-                  {actioningId === approvingItem.id ? "Saving..." : "Save & Approve"}
-                </button>
-              </div>
-            </form>
+      {openApprove && approveItem && <Modal title="Verify and approve question" icon={<Check size={17} />} onClose={() => setApproveItem(null)} wide>
+        <form onSubmit={approve}>
+          <div className="cms-modal-body">
+            <div className="cms-quote"><small>Submitted question</small>{approveItem.question}</div>
+            <div className="cms-alert cms-alert--warn"><AlertTriangle size={17} /><span>Review the details carefully. Only the answer you confirm below will be added to the live knowledge base.</span></div>
+            <Field label="Category"><select className="cms-select" value={formModule} onChange={(e) => setFormModule(e.target.value)}>{MODULE_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></Field>
+            <Field label="Sub intent"><input className="cms-input" required value={formSubIntent} onChange={(e) => setFormSubIntent(e.target.value)} placeholder="e.g. library, wifi, hostel" /></Field>
+            <Field label="Question"><input className="cms-input" required value={question} onChange={(e) => setQuestion(e.target.value)} /></Field>
+            <Field label="Verified answer"><textarea className="cms-textarea" required rows={4} value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder="Write a checked, helpful answer…" /></Field>
+            <Field label="Keywords" hint="Comma-separated terms that help match student phrasing."><input className="cms-input" value={keywords} onChange={(e) => setKeywords(e.target.value)} placeholder="library, opening times, study" /></Field>
           </div>
-        </div>
-      )}
-
-      {/* Toast */}
-      {toast && (
-        <div
-          className={`fixed bottom-6 right-6 px-5 py-3 rounded-xl text-sm font-semibold shadow-xl z-50 ${
-            toast.type === "ok"
-              ? "bg-emerald-600 text-white"
-              : "bg-rose-600 text-white"
-          }`}
-        >
-          {toast.msg}
-        </div>
-      )}
-    </div>
+          <div className="cms-modal-foot"><button type="button" className="cms-btn cms-btn--ghost" onClick={() => setApproveItem(null)}>Cancel</button><button type="submit" className="cms-btn cms-btn--success" disabled={actioningId === approveItem.id || !isSupabaseConfigured}>{actioningId === approveItem.id ? "Saving…" : "Add answer and approve"}</button></div>
+        </form>
+      </Modal>}
+      {deleteItem && <Modal title="Delete suggestion permanently?" icon={<Trash2 size={17} />} tone="danger" onClose={() => setDeleteItem(null)}>
+        <div className="cms-modal-body"><p>This removes the suggestion record from the review history.</p><div className="cms-quote">{deleteItem.question}</div></div>
+        <div className="cms-modal-foot"><button type="button" className="cms-btn cms-btn--ghost" onClick={() => setDeleteItem(null)}>Cancel</button><button type="button" className="cms-btn cms-btn--accent" disabled={actioningId === deleteItem.id} onClick={() => void remove()}>{actioningId === deleteItem.id ? "Deleting…" : "Delete permanently"}</button></div>
+      </Modal>}
+      <Toast toast={toast} />
+    </main>
   );
 }
