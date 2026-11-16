@@ -1,0 +1,251 @@
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap");
+
+:root {
+  --font-geist-sans: "Geist", Arial, sans-serif;
+  --font-geist-mono: "Geist Mono", monospace;
+  --brand-900: #0d2137;
+  --brand-800: #1a3a5c;
+  --brand-700: #1e4a78;
+  --brand-600: #2e6da4;
+  --brand-400: #5b9fd6;
+  --brand-200: #b8d8f5;
+  --brand-50: #eef6fd;
+  --gray-950: #0a0f14;
+  --gray-900: #111827;
+  --gray-800: #1f2937;
+  --gray-700: #374151;
+  --gray-500: #6b7280;
+  --gray-400: #9ca3af;
+  --gray-200: #e5e7eb;
+  --gray-100: #f3f4f6;
+  --gray-50: #f9fafb;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --font-sans: "Inter", "DM Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, .08), 0 1px 2px rgba(0, 0, 0, .06);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, .10), 0 2px 6px rgba(0, 0, 0, .08);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, .14), 0 4px 12px rgba(0, 0, 0, .10);
+  --shadow-xl: 0 24px 64px rgba(0, 0, 0, .18), 0 8px 20px rgba(0, 0, 0, .12);
+  --chat-max-w: 740px;
+  --header-h: 68px;
+  --input-h: 72px;
+}
+
+.chat-preview,
+.chat-preview *,
+.chat-preview *::before,
+.chat-preview *::after { box-sizing: border-box; }
+
+.chat-preview {
+  min-height: 100dvh;
+  color: #1f2937;
+  background: #f3f5f4;
+  font-family: "DM Sans", sans-serif;
+}
+.chat-preview button,
+.chat-preview input { font: inherit; }
+.chat-preview button { cursor: pointer; }
+.chat-preview .chat-shell {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: #f3f5f4;
+}
+.chat-preview .chat-header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  height: 72px;
+  padding: 0 clamp(16px, 4vw, 56px);
+  background: #fdfbf7;
+  border-bottom: 1px solid rgba(31, 41, 55, .14);
+}
+.chat-preview .chat-header-brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.chat-preview .brand-avatar {
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  overflow: hidden;
+  background: #e5ecee;
+  border: 3px solid #e5ecee;
+  border-radius: 50%;
+}
+.chat-preview .brand-avatar img,
+.chat-preview .msg-avatar img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.chat-preview .brand-name {
+  margin: 0;
+  color: #1f2937;
+  font: 800 11px/1.2 "Manrope", sans-serif;
+  letter-spacing: .06em;
+}
+.chat-preview .brand-sub { margin: 3px 0 0; color: #68737d; font-size: 9px; }
+.chat-preview .chat-header-actions { display: flex; flex: none; align-items: center; gap: 6px; }
+.chat-preview .status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 8px;
+  color: #68737d;
+  border: 1px solid rgba(31, 41, 55, .12);
+  font-size: 9px;
+  white-space: nowrap;
+}
+.chat-preview .status-dot { width: 8px; height: 8px; background: #39734e; border-radius: 50%; }
+.chat-preview .pill-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 10px;
+  color: #104e8b;
+  background: transparent;
+  border: 1px solid rgba(16, 78, 139, .18);
+  font-size: 9px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.chat-preview .pill-btn--primary { color: #fff; background: #d7432f; border-color: #d7432f; }
+.chat-preview .chip-bar {
+  flex: none;
+  padding: 11px clamp(16px, 4vw, 56px);
+  background: #fdfbf7;
+  border-bottom: 1px solid rgba(31, 41, 55, .1);
+}
+.chat-preview .chip-label { display: block; margin-bottom: 7px; color: #68737d; font-size: 8px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.chat-preview .chip-list { display: flex; flex-wrap: wrap; gap: 7px; }
+.chat-preview .chip { padding: 6px 10px; color: #104e8b; background: #fff; border: 1px solid rgba(16, 78, 139, .16); font-size: 10px; }
+.chat-preview .messages-pane {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 28px clamp(18px, 5vw, 68px);
+  background: #f3f5f4;
+}
+.chat-preview .msg-row { display: flex; align-items: flex-end; gap: 10px; }
+.chat-preview .msg-row--user { flex-direction: row-reverse; }
+.chat-preview .msg-avatar {
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  overflow: hidden;
+  color: #fff;
+  background: #1f2937;
+  border: 2px solid #e5ecee;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  line-height: 30px;
+}
+.chat-preview .bubble {
+  max-width: 72%;
+  padding: 12px 16px;
+  color: #1f2937;
+  background: #fff;
+  border: 1px solid rgba(31, 41, 55, .1);
+  font-size: 12px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.chat-preview .bubble--user { color: #fff; background: #104e8b; border-color: #104e8b; }
+.chat-preview .input-bar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 10px;
+  min-height: 74px;
+  padding: 10px clamp(16px, 5vw, 68px);
+  background: #f3f5f4;
+  border-top: 1px solid rgba(31, 41, 55, .1);
+}
+.chat-preview .input-bar input {
+  flex: 1;
+  min-width: 0;
+  height: 48px;
+  padding: 0 14px;
+  color: #1f2937;
+  background: #fff;
+  border: 1px solid rgba(16, 78, 139, .2);
+  border-radius: 2px;
+  font-size: 12px;
+}
+.chat-preview .input-bar input::placeholder { color: #737f88; }
+.chat-preview .input-bar button {
+  display: grid;
+  flex: 0 0 42px;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  color: #fff;
+  background: #d7432f;
+  border: 0;
+}
+.chat-preview .composer-note { margin: 0; padding: 0 0 11px; color: #68737d; background: #f3f5f4; font-size: 10px; text-align: center; }
+
+.chat-preview--readable .brand-name { font-size: 15px; letter-spacing: .02em; }
+.chat-preview--readable .brand-sub { color: #52616b; font-size: 12px; }
+.chat-preview--readable .status-chip,
+.chat-preview--readable .pill-btn { font-size: 12px; }
+.chat-preview--readable .pill-btn { min-height: 40px; padding: 0 13px; }
+.chat-preview--readable .chip-label { color: #52616b; font-size: 11px; }
+.chat-preview--readable .chip { padding: 8px 12px; font-size: 13px; }
+.chat-preview--readable .messages-pane { gap: 22px; padding-top: 34px; padding-bottom: 34px; }
+.chat-preview--readable .msg-avatar { flex-basis: 40px; width: 40px; height: 40px; line-height: 36px; }
+.chat-preview--readable .bubble { max-width: 82%; padding: 16px 20px; color: #172b3a; font-size: 16px; line-height: 1.75; }
+.chat-preview--readable .bubble--user { color: #fff; }
+.chat-preview--readable .input-bar { min-height: 82px; }
+.chat-preview--readable .input-bar input { height: 54px; font-size: 16px; }
+.chat-preview--readable .input-bar input::placeholder { color: #596771; }
+.chat-preview--readable .input-bar button { flex-basis: 48px; width: 48px; height: 48px; }
+.chat-preview--readable .composer-note { padding-bottom: 12px; color: #596771; font-size: 12px; }
+
+@media (max-width: 767px) {
+  .chat-preview .chat-header { height: 62px; gap: 5px; padding: 0 10px; }
+  .chat-preview .chat-header-brand { gap: 7px; }
+  .chat-preview .brand-avatar { flex-basis: 34px; width: 34px; height: 34px; }
+  .chat-preview .brand-name { font-size: 10px; }
+  .chat-preview .brand-sub { display: none; }
+  .chat-preview .chat-header-actions { gap: 3px; }
+  .chat-preview .status-chip { padding: 4px 5px; }
+  .chat-preview .pill-btn { min-height: 32px; padding: 0 6px; font-size: 9px; }
+  .chat-preview .chip-bar { padding: 9px 10px; }
+  .chat-preview .chip { padding: 6px 8px; font-size: 9px; }
+  .chat-preview .messages-pane { gap: 16px; padding: 17px 10px; }
+  .chat-preview .bubble { max-width: 86%; padding: 10px 12px; font-size: 11px; }
+  .chat-preview .input-bar { min-height: 62px; gap: 7px; padding: 7px 10px; }
+  .chat-preview .input-bar input { height: 43px; padding: 0 11px; font-size: 10px; }
+  .chat-preview .input-bar button { flex-basis: 38px; width: 38px; height: 38px; }
+  .chat-preview--readable .brand-name { font-size: 11px; }
+  .chat-preview--readable .status-chip { padding: 5px 6px; font-size: 10px; }
+  .chat-preview--readable .pill-btn { min-height: 34px; padding: 0 7px; font-size: 10px; }
+  .chat-preview--readable .chip-label { font-size: 10px; }
+  .chat-preview--readable .chip { padding: 7px 9px; font-size: 12px; }
+  .chat-preview--readable .messages-pane { gap: 18px; padding: 18px 11px; }
+  .chat-preview--readable .msg-avatar { flex-basis: 34px; width: 34px; height: 34px; line-height: 30px; }
+  .chat-preview--readable .bubble { max-width: 90%; padding: 13px 15px; font-size: 15px; line-height: 1.7; }
+  .chat-preview--readable .input-bar { min-height: 70px; padding: 8px 11px; }
+  .chat-preview--readable .input-bar input { height: 48px; padding: 0 12px; font-size: 15px; }
+  .chat-preview--readable .input-bar button { flex-basis: 44px; width: 44px; height: 44px; }
+  .chat-preview--readable .composer-note { padding: 0 10px 12px; font-size: 11px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-preview *, .chat-preview *::before, .chat-preview *::after { scroll-behavior: auto !important; transition: none !important; }
+}

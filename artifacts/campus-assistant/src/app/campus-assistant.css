@@ -911,3 +911,54 @@
   .ca-chat-app .ca-sidebar-expand { display:none; }
   .ca-chat-app .ca-sidebar-collapsed .ca-sidebar-header { display:block; padding:18px 15px 10px !important; }
 }
+
+/* Readability pass for the main conversation area. */
+.ca-chat-app .brand-name { font-size: 14px; letter-spacing: .02em; }
+.ca-chat-app .brand-sub { color: #52616B; font-size: 11px; }
+.ca-chat-app .status-chip,
+.ca-chat-app .pill-btn { font-size: 11px; }
+.ca-chat-app .chip-label { color: #596771; font-size: 10px; }
+.ca-chat-app .chip { font-size: 13px; }
+.ca-chat-app .messages-pane { gap: 20px; }
+.ca-chat-app .bubble {
+  max-width: 82%;
+  padding: 15px 18px;
+  color: #172B3A;
+  font-size: 16px;
+  line-height: 1.75;
+}
+.ca-chat-app .bubble--user { color: #FFFFFF; }
+.ca-chat-app .input-bar { min-height: 82px; }
+.ca-chat-app .input-bar input { height: 54px; font-size: 16px; }
+.ca-chat-app .input-bar input::placeholder { color: #596771; }
+.ca-chat-app .input-bar button { width: 48px; height: 48px; }
+.ca-chat-app .ca-empty-eyebrow { font-size: 10px; }
+.ca-chat-app .ca-empty-chat p { color: #4F5D66; font-size: 15px; line-height: 1.75; }
+.ca-chat-app .ca-empty-prompts button { min-height: 48px; font-size: 14px; }
+.ca-chat-app .chip:focus-visible,
+.ca-chat-app .pill-btn:focus-visible,
+.ca-chat-app .input-bar button:focus-visible,
+.ca-chat-app .ca-empty-prompts button:focus-visible {
+  outline: 3px solid rgba(16, 78, 139, .55);
+  outline-offset: 2px;
+}
+
+@media (max-width: 767px) {
+  .ca-chat-app .brand-name { font-size: 11px; }
+  .ca-chat-app .pill-btn { font-size: 10px; }
+  .ca-chat-app .ca-home-link { font-size: 10px; }
+  .ca-chat-app .chip-label { font-size: 10px; }
+  .ca-chat-app .chip { padding: 7px 9px; font-size: 12px; }
+  .ca-chat-app .messages-pane { gap: 18px; }
+  .ca-chat-app .bubble {
+    max-width: calc(100% - 46px);
+    padding: 13px 15px;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .ca-chat-app .input-bar { min-height: 70px; }
+  .ca-chat-app .input-bar input { height: 48px; padding: 0 12px; font-size: 15px; }
+  .ca-chat-app .input-bar button { width: 44px; height: 44px; }
+  .ca-chat-app .ca-empty-chat p { font-size: 14px; }
+  .ca-chat-app .ca-empty-prompts button { min-height: 46px; font-size: 13px; }
+}
