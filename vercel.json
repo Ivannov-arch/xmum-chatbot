@@ -1,0 +1,16 @@
+{
+  "buildCommand": "pnpm --filter @workspace/campus-assistant run build:vercel",
+  "outputDirectory": "artifacts/campus-assistant/dist",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
+  ],
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    }
+  ]
+}
