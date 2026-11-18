@@ -4,6 +4,7 @@ import json
 import requests
 from typing import List, Tuple, Optional
 from dotenv import load_dotenv
+from chatbot.model_resolver import resolve_gemini_model
 
 load_dotenv()
 
@@ -27,7 +28,10 @@ class GeminiMatcher:
         # Round-robin key iterator for load balancing
         self._key_cycle = itertools.cycle(self.api_keys) if self.api_keys else None
 
-        self.model = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+        self.model = resolve_gemini_model(
+            api_key=self.api_keys[0] if self.api_keys else None,
+            env_override=os.getenv("GEMINI_MODEL"),
+        )
 
     def is_available(self) -> bool:
         return len(self.api_keys) > 0

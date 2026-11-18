@@ -4,6 +4,7 @@ import json
 import requests
 from typing import Dict, Any, Optional
 from dotenv import load_dotenv
+from chatbot.model_resolver import resolve_gemini_model
 
 load_dotenv()
 
@@ -40,12 +41,11 @@ class GeminiTranslator:
         # Round-robin key iterator
         self._key_cycle = itertools.cycle(self.api_keys) if self.api_keys else None
 
-        primary_model = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
-        fallback_candidates = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.0-flash"]
+        primary_model = resolve_gemini_model(
+            api_key=self.api_keys[0] if self.api_keys else None,
+            env_override=os.getenv("GEMINI_MODEL"),
+        )
         self.models = [primary_model]
-        for m in fallback_candidates:
-            if m not in self.models:
-                self.models.append(m)
 
     def is_available(self) -> bool:
         return len(self.api_keys) > 0
