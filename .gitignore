@@ -57,3 +57,25 @@ Thumbs.db
 __pycache__/
 .pytest_cache/
 artifacts/api-server/python/nltk_data/
+
+# Python virtual environments
+.venv/
+venv/
+env/
+
+# Python secrets & local config
+.env
+.env.local
+
+# Python build artifacts
+*.pyc
+*.pyo
+__pycache__/
+*.egg-info/
+.pytest_cache/
+
+# IDE - VSCode (local only, not for sharing)
+.vscode/
+
+# NLTK downloaded data
+ml/nltk_data/
