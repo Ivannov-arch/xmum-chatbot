@@ -62,6 +62,11 @@ class XMUMChatbot:
         self.retriever = KnowledgeRetriever()
         self.translator = GeminiTranslator()
         self.matcher = self.retriever.gemini_matcher
+        # Build exact match index for O(1) lookup
+        self.exact_match_index = {}
+        for item in self.retriever.knowledge_base:
+            key = item.question.strip().lower().rstrip('?').strip()
+            self.exact_match_index[key] = item
 
         print(
             "[Chatbot] [OK] Initialized with intent classifier, "
@@ -89,11 +94,9 @@ class XMUMChatbot:
         # ──────────────────────────────────────────────────────────────
         exact_match_item = None
         cleaned_input = user_message.strip().lower().rstrip('?').strip()
-        for item in self.retriever.knowledge_base:
-            db_question = item.question.strip().lower().rstrip('?').strip()
-            if cleaned_input == db_question:
-                exact_match_item = item
-                break
+        # O(1) exact match lookup
+        cleaned_input = user_message.strip().lower().rstrip('?').strip()
+        exact_match_item = self.exact_match_index.get(cleaned_input)
 
         if exact_match_item:
             response = self._build_success_response(
@@ -168,7 +171,7 @@ class XMUMChatbot:
             # Step 3.5: RAG — synthesize answer from retrieved chunks
             # ──────────────────────────────────────────────────────────────
             if all_scores:
-                top_chunks = [(item, s) for item, s in all_scores if s > 0][:5]
+                top_chunks = [(item, s) for item, s in all_scores if s >= 3][:5]
                 if top_chunks:
                     session_history = self.context.get_history(session_id)
                     rag_answer = self.matcher.generate_rag_answer(

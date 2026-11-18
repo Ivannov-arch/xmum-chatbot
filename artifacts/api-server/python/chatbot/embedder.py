@@ -8,6 +8,7 @@
 #   - chatbot/retriever.py  (embed user query at runtime)
 
 import os
+import itertools
 import requests
 from typing import List, Optional
 from dotenv import load_dotenv
@@ -30,6 +31,9 @@ class GeminiEmbedder:
             val = os.getenv(key_name)
             if val and val.strip() and val.strip() != "your-gemini-api-key-here":
                 self.api_keys.append(val.strip())
+        
+        # Round-robin key iterator for load balancing
+        self._key_cycle = itertools.cycle(self.api_keys) if self.api_keys else None
 
     def is_available(self) -> bool:
         return len(self.api_keys) > 0
@@ -53,19 +57,27 @@ class GeminiEmbedder:
             "outputDimensionality": 768
         }
 
-        for api_key in self.api_keys:
-            url = f"{self.API_BASE}/{self.EMBEDDING_MODEL}:embedContent?key={api_key}"
-            try:
-                response = requests.post(url, json=payload, timeout=15)
-                if response.status_code == 200:
-                    values = response.json()["embedding"]["values"]
-                    return values
-                print(f"[Embedder] Key {api_key[:8]}... status {response.status_code}")
-                if response.status_code in (429, 403):
+        # Round-robin through keys: try each key once, starting from next in cycle
+        attempted_keys = set()
+        if self._key_cycle:
+            for _ in range(len(self.api_keys)):
+                api_key = next(self._key_cycle)
+                if api_key in attempted_keys:
+                    continue  # Already tried this key in this call
+                attempted_keys.add(api_key)
+                
+                url = f"{self.API_BASE}/{self.EMBEDDING_MODEL}:embedContent?key={api_key}"
+                try:
+                    response = requests.post(url, json=payload, timeout=15)
+                    if response.status_code == 200:
+                        values = response.json()["embedding"]["values"]
+                        return values
+                    print(f"[Embedder] Key {api_key[:8]}... status {response.status_code}")
+                    if response.status_code in (429, 403):
+                        continue  # Try next key
+                except Exception as e:
+                    print(f"[Embedder] Error with key {api_key[:8]}...: {e}")
                     continue
-            except Exception as e:
-                print(f"[Embedder] Error with key {api_key[:8]}...: {e}")
-                continue
 
         return None
 

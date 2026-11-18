@@ -1,220 +1,239 @@
 import os
+import itertools
 import json
 import requests
-from typing import Dict, Any, Tuple, Optional
+from typing import Dict, Any, Optional
 from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
+
 
 class GeminiTranslator:
     """
     Handles translation and grammar correction of user queries (preprocessing)
-    and translating the retrieved answer back to the user's language (postprocessing)
-    using the Gemini API via REST.
+    and translating the retrieved answer back to the user language (postprocessing).
+    Uses round-robin key rotation to distribute quota evenly across all keys.
+    Skips the Gemini call entirely for English input (fast-path heuristic).
     """
+
+    # English words that appear frequently in campus chatbot queries.
+    _ENGLISH_INDICATORS = frozenset([
+        "what", "when", "where", "how", "why", "who", "which",
+        "is", "are", "can", "do", "does", "did", "will", "would",
+        "library", "hours", "wifi", "hostel", "scholarship", "campus",
+        "the", "and", "to", "for", "with", "about", "application", "fee",
+        "opening", "time", "deadline", "contact", "email", "phone",
+        "register", "course", "class", "schedule", "exam", "result",
+        "cafeteria", "bus", "transport", "login", "password", "portal",
+    ])
+
     def __init__(self):
         self.api_keys = []
         for key_name in ["GEMINI_API_KEY", "GEMINI_API_KEY_2", "GEMINI_API_KEY_3"]:
             val = os.getenv(key_name)
             if val and val.strip() and val.strip() != "your-gemini-api-key-here":
                 self.api_keys.append(val.strip())
-        
+
         # Keep self.api_key for backward compatibility
         self.api_key = self.api_keys[0] if self.api_keys else None
 
-        # Define fallback models in order of preference
-        primary_model = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
-        fallback_candidates = [
-            "gemini-3.6-flash",
-            "gemini-2.5-flash",
-            "gemini-3.1-pro-preview"
-        ]
-        # De-duplicate while preserving order
+        # Round-robin key iterator
+        self._key_cycle = itertools.cycle(self.api_keys) if self.api_keys else None
+
+        primary_model = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+        fallback_candidates = ["gemini-2.0-flash", "gemini-1.5-flash"]
         self.models = [primary_model]
         for m in fallback_candidates:
             if m not in self.models:
                 self.models.append(m)
 
     def is_available(self) -> bool:
-        """Check if at least one Gemini API Key is configured."""
         return len(self.api_keys) > 0
+
+    def _next_key(self) -> Optional[str]:
+        if self._key_cycle:
+            return next(self._key_cycle)
+        return None
+
+    def _looks_english(self, text: str) -> bool:
+        """
+        Fast local heuristic: return True if the query looks like English.
+        Counts known English campus-query words; threshold = 2 matches.
+        This avoids a Gemini API call for the vast majority of queries.
+        """
+        words = text.lower().split()
+        matches = sum(1 for w in words if w.rstrip("?.,!") in self._ENGLISH_INDICATORS)
+        return matches >= 2
+
+    def _call_gemini(self, payload: dict, timeout: int = 10) -> Optional[dict]:
+        """
+        Try each API key once in round-robin order.
+        Returns parsed response dict on first success, None if all fail.
+        """
+        headers = {"Content-Type": "application/json"}
+        attempted: set = set()
+
+        for _ in range(len(self.api_keys)):
+            api_key = self._next_key()
+            if not api_key or api_key in attempted:
+                continue
+            attempted.add(api_key)
+
+            for model_name in self.models:
+                url = (
+                    f"https://generativelanguage.googleapis.com/v1beta/models/"
+                    f"{model_name}:generateContent?key={api_key}"
+                )
+                try:
+                    resp = requests.post(url, headers=headers, json=payload, timeout=timeout)
+                    if resp.status_code == 200:
+                        return resp.json()
+                    print(
+                        f"[Translator] Key {api_key[:8]}... model {model_name}"
+                        f" status {resp.status_code}"
+                    )
+                    if resp.status_code in (429, 403) or (
+                        resp.status_code == 400 and "API key" in resp.text
+                    ):
+                        break  # exhausted key — try next key
+                except Exception as exc:
+                    print(f"[Translator] Key {api_key[:8]}... error: {exc}")
+                    continue
+
+        return None
 
     def preprocess_query(self, user_query: str) -> Dict[str, Any]:
         """
-        Detects the language of the user query, translates it to English if necessary,
-        and corrects any grammar or spelling mistakes.
-        
-        Returns:
-            A dictionary containing:
-            - detected_language: str (e.g., 'Indonesian', 'Chinese', 'Malay', 'English')
-            - is_english: bool
-            - cleaned_english_query: str (the English version with meaning optimized for DB retrieval)
+        Detect language and translate/correct the query to English.
+        Skips the Gemini call entirely if the query already looks English.
         """
+        # Fast path: skip Gemini for English queries (saves ~1 API call per request)
+        if self._looks_english(user_query):
+            return {
+                "detected_language": "English",
+                "is_english": True,
+                "cleaned_english_query": user_query,
+            }
+
         if not self.is_available():
             return {
                 "detected_language": "English",
                 "is_english": True,
-                "cleaned_english_query": user_query
+                "cleaned_english_query": user_query,
             }
 
-        prompt = f"""You are a multilingual preprocessing assistant for a campus chatbot.
-Your task is to analyze the user's input query and perform the following:
-1. Detect the language of the query.
-2. Translate the query to English if it is in another language (like Malay, Chinese, Indonesian, Arabic, Russian, Tamil, Hindi, etc.).
-3. Correct any grammar, spelling, and typo mistakes to produce a clean, grammatically correct English query.
-4. Ensure the cleaned English query represents the core semantic meaning of the user's intent, phrased in a way that matches a database of campus FAQs (e.g. using standard terms like "library hours", "hostel application", "wifi connection", etc.).
-
-Output the result strictly conforming to the JSON schema.
-
-User Input: "{user_query}"
-"""
+        prompt = (
+            'You are a multilingual preprocessing assistant for a campus chatbot.\n'
+            'Your task is to analyze the user\'s input query and perform the following:\n'
+            '1. Detect the language of the query.\n'
+            '2. Translate the query to English if it is in another language.\n'
+            '3. Correct grammar, spelling, and typos.\n'
+            '4. Rephrase to match campus FAQ terminology '
+            '(e.g. "library hours", "hostel application", "wifi connection").\n\n'
+            'Output the result strictly conforming to the JSON schema.\n\n'
+            f'User Input: "{user_query}"'
+        )
 
         payload = {
-            "contents": [{
-                "parts": [{
-                    "text": prompt
-                }]
-            }],
+            "contents": [{"parts": [{"text": prompt}]}],
             "generationConfig": {
                 "responseMimeType": "application/json",
                 "responseSchema": {
                     "type": "OBJECT",
                     "properties": {
-                        "detected_language": {
-                            "type": "STRING",
-                            "description": "The name of the detected language (e.g., 'Indonesian', 'Chinese', 'Malay', 'Arabic', 'Russian', 'English')."
-                        },
-                        "is_english": {
-                            "type": "BOOLEAN",
-                            "description": "True if the original input was already in English, False otherwise."
-                        },
-                        "cleaned_english_query": {
-                            "type": "STRING",
-                            "description": "The corrected, translated, and cleaned English query representing the core semantic meaning of the user's intent."
-                        }
+                        "detected_language": {"type": "STRING"},
+                        "is_english": {"type": "BOOLEAN"},
+                        "cleaned_english_query": {"type": "STRING"},
                     },
-                    "required": ["detected_language", "is_english", "cleaned_english_query"]
-                }
+                    "required": ["detected_language", "is_english", "cleaned_english_query"],
+                },
+            },
+        }
+
+        res_data = self._call_gemini(payload, timeout=10)
+        if not res_data:
+            print("[Translator] All keys exhausted for preprocessing.")
+            return {
+                "detected_language": "English",
+                "is_english": True,
+                "cleaned_english_query": user_query,
             }
-        }
 
-        headers = {"Content-Type": "application/json"}
-
-        for api_key in self.api_keys:
-            key_exhausted = False
-            for model_name in self.models:
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
-                try:
-                    response = requests.post(url, headers=headers, json=payload, timeout=10)
-                    if response.status_code == 200:
-                        res_data = response.json()
-                        candidates = res_data.get("candidates", [])
-                        if not candidates:
-                            print(f"[Translator] Empty response with model {model_name} using key {api_key[:8]}... Trying fallback...")
-                            continue
-                            
-                        result_text = candidates[0].get("content", {}).get("parts", [])[0].get("text", "").strip()
-                        result_json = json.loads(result_text)
-                        
-                        return {
-                            "detected_language": result_json.get("detected_language", "English"),
-                            "is_english": bool(result_json.get("is_english", True)),
-                            "cleaned_english_query": result_json.get("cleaned_english_query", user_query)
-                        }
-                    
-                    print(f"[Translator] Gemini API error: Key={api_key[:8]}..., Model={model_name}, Status={response.status_code}, Response={response.text}")
-                    if response.status_code in (429, 403) or (response.status_code == 400 and "API key" in response.text):
-                        key_exhausted = True
-                        break  # Break inner loop to try next API key
-                        
-                except Exception as e:
-                    print(f"[Translator] Error preprocessing query with model {model_name} using key {api_key[:8]}...: {str(e)}")
-                    continue
-            if key_exhausted:
-                continue
-
-        print("[Translator] All Gemini models failed or were exhausted for preprocessing.")
-        return {
-            "detected_language": "English",
-            "is_english": True,
-            "cleaned_english_query": user_query
-        }
+        try:
+            result_text = (
+                res_data.get("candidates", [{}])[0]
+                .get("content", {})
+                .get("parts", [{}])[0]
+                .get("text", "")
+                .strip()
+            )
+            result_json = json.loads(result_text)
+            return {
+                "detected_language": result_json.get("detected_language", "English"),
+                "is_english": bool(result_json.get("is_english", True)),
+                "cleaned_english_query": result_json.get(
+                    "cleaned_english_query", user_query
+                ),
+            }
+        except Exception as exc:
+            print(f"[Translator] Failed to parse preprocessing response: {exc}")
+            return {
+                "detected_language": "English",
+                "is_english": True,
+                "cleaned_english_query": user_query,
+            }
 
     def translate_response(self, english_answer: str, target_language: str) -> str:
         """
-        Translates the English answer from the knowledge base back to the target language.
-        
-        Args:
-            english_answer: The answer text from the knowledge base (in English)
-            target_language: The language to translate to (e.g., 'Indonesian', 'Chinese')
-            
-        Returns:
-            The translated answer string.
+        Translate the English answer back to the user's language.
+        Returns the original answer if translation fails or target is English.
         """
-        if not self.is_available() or not target_language or target_language.lower() == "english":
+        if (
+            not self.is_available()
+            or not target_language
+            or target_language.lower() == "english"
+        ):
             return english_answer
 
-        prompt = f"""You are a professional translator.
-Translate the following campus chatbot answer from English into {target_language}.
-Ensure the translation is natural, polite, accurate, and retains all original details (like hours, links, emails, phone numbers, and formatting).
-Do not add any introductory or concluding remarks. Output only the translated text.
-
-English Answer:
-{english_answer}
-"""
+        prompt = (
+            f"You are a professional translator.\n"
+            f"Translate the following campus chatbot answer from English into {target_language}.\n"
+            f"Keep the translation natural, polite, and accurate. Retain all details "
+            f"(hours, links, emails, phone numbers, formatting).\n"
+            f"Do not add introductory or concluding remarks. Output only the translated text.\n\n"
+            f"English Answer:\n{english_answer}"
+        )
 
         payload = {
-            "contents": [{
-                "parts": [{
-                    "text": prompt
-                }]
-            }],
+            "contents": [{"parts": [{"text": prompt}]}],
             "generationConfig": {
                 "maxOutputTokens": 4096,
                 "responseMimeType": "application/json",
                 "responseSchema": {
                     "type": "OBJECT",
                     "properties": {
-                        "translated_text": {
-                            "type": "STRING",
-                            "description": "The translated text."
-                        }
+                        "translated_text": {"type": "STRING"},
                     },
-                    "required": ["translated_text"]
-                }
-            }
+                    "required": ["translated_text"],
+                },
+            },
         }
 
-        headers = {"Content-Type": "application/json"}
+        res_data = self._call_gemini(payload, timeout=10)
+        if not res_data:
+            print("[Translator] All keys exhausted for translation.")
+            return english_answer
 
-        for api_key in self.api_keys:
-            key_exhausted = False
-            for model_name in self.models:
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
-                try:
-                    response = requests.post(url, headers=headers, json=payload, timeout=10)
-                    if response.status_code == 200:
-                        res_data = response.json()
-                        candidates = res_data.get("candidates", [])
-                        if not candidates:
-                            print(f"[Translator] Empty translation response with model {model_name} using key {api_key[:8]}... Trying fallback...")
-                            continue
-                            
-                        result_text = candidates[0].get("content", {}).get("parts", [])[0].get("text", "").strip()
-                        result_json = json.loads(result_text)
-                        return result_json.get("translated_text", english_answer)
-                    
-                    print(f"[Translator] Gemini translation API error: Key={api_key[:8]}..., Model={model_name}, Status={response.status_code}, Response={response.text}")
-                    if response.status_code in (429, 403) or (response.status_code == 400 and "API key" in response.text):
-                        key_exhausted = True
-                        break  # Break inner loop to try next API key
-                        
-                except Exception as e:
-                    print(f"[Translator] Error translating response with model {model_name} using key {api_key[:8]}...: {str(e)}")
-                    continue
-            if key_exhausted:
-                continue
-
-        print("[Translator] All Gemini models failed or were exhausted for translation.")
-        return english_answer
+        try:
+            result_text = (
+                res_data.get("candidates", [{}])[0]
+                .get("content", {})
+                .get("parts", [{}])[0]
+                .get("text", "")
+                .strip()
+            )
+            result_json = json.loads(result_text)
+            return result_json.get("translated_text", english_answer)
+        except Exception as exc:
+            print(f"[Translator] Failed to parse translation response: {exc}")
+            return english_answer

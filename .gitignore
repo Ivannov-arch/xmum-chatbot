@@ -79,3 +79,7 @@ __pycache__/
 
 # NLTK downloaded data
 ml/nltk_data/
+
+# Local backup folders
+.backup-*/
+.backup-before-bottleneck-fixes/
