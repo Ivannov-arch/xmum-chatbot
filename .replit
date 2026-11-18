@@ -22,10 +22,13 @@ timeoutMs = 20000
 [nix]
 channel = "stable-25_05"
 
-[userenv]
-
-[userenv.shared]
-SUPABASE_ANON_KEY = "sb_publishable_hzpmaggMDqtqbRaPaRz0dA_hSgWcIwu"
-SUPABASE_URL = "https://ixkmbmequacygqodlugu.supabase.co"
-VITE_SUPABASE_ANON_KEY = "sb_publishable_hzpmaggMDqtqbRaPaRz0dA_hSgWcIwu"
-VITE_SUPABASE_URL = "https://ixkmbmequacygqodlugu.supabase.co"
+# Environment variables are stored in Replit Secrets (not committed to git).
+# Go to: Replit > Tools > Secrets and add:
+#   SUPABASE_URL
+#   SUPABASE_ANON_KEY
+#   VITE_SUPABASE_URL
+#   VITE_SUPABASE_ANON_KEY
+#   GEMINI_API_KEY
+#   GEMINI_API_KEY_2
+#   GEMINI_API_KEY_3
+#   API_SECRET_KEY
