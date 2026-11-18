@@ -27,7 +27,7 @@ class GeminiMatcher:
         # Round-robin key iterator for load balancing
         self._key_cycle = itertools.cycle(self.api_keys) if self.api_keys else None
 
-        self.model = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+        self.model = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
 
     def is_available(self) -> bool:
         return len(self.api_keys) > 0

@@ -40,8 +40,8 @@ class GeminiTranslator:
         # Round-robin key iterator
         self._key_cycle = itertools.cycle(self.api_keys) if self.api_keys else None
 
-        primary_model = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
-        fallback_candidates = ["gemini-2.0-flash", "gemini-1.5-flash"]
+        primary_model = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+        fallback_candidates = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.0-flash"]
         self.models = [primary_model]
         for m in fallback_candidates:
             if m not in self.models:
@@ -59,8 +59,12 @@ class GeminiTranslator:
         """
         Fast local heuristic: return True if the query looks like English.
         Counts known English campus-query words; threshold = 2 matches.
-        This avoids a Gemini API call for the vast majority of queries.
+        Also returns False immediately if the text contains non-ASCII characters
+        (Chinese, Arabic, Malay with diacritics, etc.) — those always need translation.
         """
+        # Any non-ASCII character → definitely not plain English, go to Gemini
+        if any(ord(c) > 127 for c in text):
+            return False
         words = text.lower().split()
         matches = sum(1 for w in words if w.rstrip("?.,!") in self._ENGLISH_INDICATORS)
         return matches >= 2
